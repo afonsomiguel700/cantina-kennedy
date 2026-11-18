@@ -251,6 +251,14 @@ body.tema-escuro .status-3 { background: #44403c; color: #e7e5e4; }
   font-weight: 700;
 }
 
+/* ---------- Pessoas que já pediram ---------- */
+.lista-pessoas { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+.pessoa-card { background: var(--cartao); border: 1px solid var(--borda); border-radius: var(--raio); padding: 18px; box-shadow: var(--sombra); }
+.pessoa-card h3 { margin: 0 0 4px; font-size: 1.05rem; }
+.pessoa-turma { color: var(--acento-texto); font-weight: 800; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; }
+.pessoa-linha { display: flex; justify-content: space-between; gap: 8px; color: var(--texto-secundario); font-size: 0.9rem; margin-top: 8px; }
+.pessoa-linha strong { color: var(--texto); }
+
 /* ---------- Gerenciamento do cardápio ---------- */
 .admin { background: var(--cartao); border: 1px solid var(--borda); border-radius: var(--raio); padding: 8px 20px; }
 .admin summary { cursor: pointer; font-weight: 800; padding: 12px 0; }

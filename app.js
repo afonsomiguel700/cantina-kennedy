@@ -56,6 +56,8 @@ const el = {
   turma: $('#turma-cliente'),
   btnFinalizar: $('#btn-finalizar'),
   listaPedidos: $('#lista-pedidos'),
+  resumoPessoas: $('#resumo-pessoas'),
+  listaPessoas: $('#lista-pessoas'),
   formItem: $('#form-item'),
   itemNome: $('#item-nome'),
   itemDescricao: $('#item-descricao'),
@@ -280,6 +282,45 @@ function renderizarPedidos() {
   }).join('');
 }
 
+// Agrupa os pedidos por pessoa (nome + turma) para mostrar quem já pediu neste navegador.
+function renderizarPessoas() {
+  const pessoasMap = new Map();
+
+  pedidos.forEach((pedido) => {
+    const nome = String(pedido.nome || '').trim();
+    const turma = String(pedido.turma || '').trim();
+    const chave = `${nome.toLowerCase()}|${turma.toLowerCase()}`;
+
+    if (!pessoasMap.has(chave)) {
+      pessoasMap.set(chave, { nome, turma, pedidos: 0, total: 0, ultimo: pedido.data });
+    }
+
+    const pessoa = pessoasMap.get(chave);
+    pessoa.pedidos += 1;
+    pessoa.total += Number(pedido.total) || 0;
+  });
+
+  const pessoas = [...pessoasMap.values()].sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+
+  if (pessoas.length === 0) {
+    el.resumoPessoas.textContent = 'Nenhuma pessoa ainda.';
+    el.listaPessoas.innerHTML = '<p class="vazio">As pessoas aparecerão aqui quando fizerem um pedido.</p>';
+    return;
+  }
+
+  el.resumoPessoas.textContent = `${pessoas.length} ${pessoas.length === 1 ? 'pessoa já pediu' : 'pessoas já pediram'} neste navegador.`;
+
+  el.listaPessoas.innerHTML = pessoas.map((pessoa) => `
+    <article class="pessoa-card">
+      <h3>${escapar(pessoa.nome)}</h3>
+      <span class="pessoa-turma">Turma ${escapar(pessoa.turma)}</span>
+      <div class="pessoa-linha"><span>Pedidos:</span><strong>${pessoa.pedidos}</strong></div>
+      <div class="pessoa-linha"><span>Total gasto:</span><strong>${dinheiro(pessoa.total)}</strong></div>
+      <div class="pessoa-linha"><span>Último pedido:</span><strong>${escapar(pessoa.ultimo)}</strong></div>
+    </article>
+  `).join('');
+}
+
 function finalizarPedido(evento) {
   evento.preventDefault();
 
@@ -374,6 +415,7 @@ function renderizarTudo() {
   renderizarCardapio();
   renderizarCarrinho();
   renderizarPedidos();
+  renderizarPessoas();
   renderizarItensPersonalizados();
 }
 
