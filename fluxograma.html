@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fluxograma — Cantina do Kennedy</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 32px;
+      background: #ffffff;
+      color: #1c1917;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    h1 { font-size: 22px; margin: 0 0 4px; }
+    p { margin: 0 0 24px; color: #57534e; font-size: 14px; }
+    .quadro {
+      background: #ffffff;
+      border: 1px solid #e7e5e4;
+      border-radius: 12px;
+      padding: 24px;
+      display: inline-block;
+    }
+    .mermaid { font-size: 14px; }
+  </style>
+</head>
+<body>
+  <h1>Fluxograma — Cantina do Kennedy</h1>
+  <p>O site inteiro, do primeiro clique até a lista de quem já pediu.</p>
+
+  <div class="quadro" id="fluxograma">
+    <pre class="mermaid">
+flowchart TD
+    INICIO(["Usuário abre o site<br/>GitHub Pages ou index.html"])
+    CARREGA["Carregar dados salvos no navegador<br/>tema, carrinho, pedidos, cliente<br/>e itens personalizados"]
+    TEMA["Aplicar tema claro ou escuro<br/>🌙 / ☀️"]
+    RENDER["Renderizar tudo:<br/>filtros, cardápio, carrinho,<br/>pedidos, pessoas e itens personalizados"]
+    MENU{"Qual ação do usuário?"}
+
+    INICIO --> CARREGA --> TEMA --> RENDER --> MENU
+
+    MENU -->|"Ver cardápio"| CARDAPIO["Seção Cardápio"]
+    CARDAPIO --> FILTRO["Filtrar por categoria:<br/>Todos, Lanches, Salgados,<br/>Bebidas, Sobremesas, Outros"]
+    FILTRO --> CARDAPIO
+    CARDAPIO -->|"Adicionar +"| ADICIONAR["Adiciona 1 unidade ao carrinho<br/>e salva no navegador"]
+    ADICIONAR --> ATUALIZA["Atualiza contador 🛒 e total"]
+    ATUALIZA --> MENU
+
+    MENU -->|"Abrir carrinho"| CARRINHO["Abre painel lateral<br/>🛒 Seu carrinho"]
+    CARRINHO --> AJUSTE{"Ajustar itens?"}
+    AJUSTE -->|"+ / − / ✕"| QTDE["Aumenta, diminui ou remove o item<br/>salva e recalcula o total"]
+    QTDE --> AJUSTE
+    AJUSTE -->|"Finalizar pedido"| VALIDA{"Nome e turma<br/>preenchidos?"}
+    VALIDA -->|"Não"| AVISO["⚠️ Aviso na tela:<br/>preencha nome e turma"]
+    AVISO --> CARRINHO
+    VALIDA -->|"Sim"| CRIA["Cria pedido #101, #102...<br/>status inicial: Recebido"]
+    CRIA --> SALVA["Salva pedido e esvazia carrinho<br/>no localStorage"]
+    SALVA --> SUCESSO["✅ Aviso de sucesso<br/>rola a página para Meus pedidos"]
+    SUCESSO --> MENU
+
+    MENU -->|"Meus pedidos"| PEDIDOS["Mostra pedidos:<br/>número, data, itens e total"]
+    PEDIDOS --> ACAO{"Ação no pedido"}
+    ACAO -->|"Avançar status"| STATUS["Recebido → Preparando →<br/>Pronto → Entregue ✅"]
+    ACAO -->|"Excluir"| EXCLUI["Remove o pedido<br/>e salva no navegador"]
+    STATUS --> MENU
+    EXCLUI --> MENU
+
+    MENU -->|"Pessoas"| PESSOAS["Agrupa os pedidos por<br/>nome + turma"]
+    PESSOAS --> CARDPESSOA["Mostra para cada pessoa:<br/>pedidos, total gasto e último pedido"]
+    CARDPESSOA --> MENU
+
+    MENU -->|"Gerenciar cardápio"| ADMIN["⚙️ Área do responsável"]
+    ADMIN --> NOVO["Adicionar item personalizado<br/>nome, preço, categoria e emoji"]
+    NOVO --> SALVACUSTOM["Salva no navegador<br/>item aparece no cardápio"]
+    ADMIN --> REMOVE["Remover item personalizado"]
+    ADMIN --> LIMPAR["Limpar todos os dados<br/>pede confirmação e restaura o original"]
+    SALVACUSTOM --> MENU
+    REMOVE --> MENU
+    LIMPAR --> MENU
+
+    MENU -->|"Botão 🌙 / ☀️"| TROCATEMA["Troca tema claro/escuro<br/>e salva a escolha"]
+    TROCATEMA --> MENU
+    </pre>
+  </div>
+
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'neutral',
+      securityLevel: 'loose',
+      flowchart: { useMaxWidth: false, htmlLabels: true, curve: 'basis' }
+    });
+  </script>
+</body>
+</html>
