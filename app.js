@@ -8,9 +8,13 @@
 
 // Chaves usadas para guardar os dados no navegador
 const CHAVES = {
-  // Só os itens criados pelo responsável ficam salvos aqui.
-  // Os itens padrão vêm sempre do código, então mudar preços no código sempre aparece.
+  // Os itens padrão vêm do código. As alterações, exclusões e estoque ficam salvos à parte.
   cardapioCustom: 'cantina.cardapio.custom',
+  cardapioEditados: 'cantina.cardapio.editados',
+  cardapioExcluidos: 'cantina.cardapio.excluidos',
+  cardapioEstoque: 'cantina.cardapio.estoque',
+  usuarios: 'cantina.usuarios',
+  sessao: 'cantina.sessao',
   carrinho: 'cantina.carrinho',
   pedidos: 'cantina.pedidos',
   cliente: 'cantina.cliente',
@@ -22,17 +26,17 @@ const CHAVES_ANTIGAS = ['cantina.cardapio', 'cantina.cardapio.v2'];
 
 // Cardápio inicial (usado na primeira vez que o site é aberto)
 const CARDAPIO_PADRAO = [
-  { id: 'item-1', nome: 'Hamburgão', descricao: 'Hambúrguer da cantina', preco: 7.5, categoria: 'Lanches', emoji: '🍔' },
-  { id: 'item-2', nome: 'Salgados variados', descricao: 'Escolha o seu salgado favorito', preco: 6.5, categoria: 'Salgados', emoji: '🥟' },
-  { id: 'item-3', nome: 'Água com gás', descricao: 'Garrafa pequena', preco: 2.5, categoria: 'Bebidas', emoji: '💧' },
-  { id: 'item-4', nome: 'Água sem gás', descricao: 'Garrafa pequena', preco: 2.5, categoria: 'Bebidas', emoji: '💧' },
-  { id: 'item-5', nome: 'Barinha de cereais', descricao: 'Crocante e prática', preco: 2.5, categoria: 'Lanches', emoji: '🍫' },
-  { id: 'item-6', nome: 'Bolinho', descricao: 'Feito na cantina', preco: 3.5, categoria: 'Sobremesas', emoji: '🧁' },
-  { id: 'item-7', nome: 'Todynho', descricao: 'Bebida de chocolate', preco: 1.5, categoria: 'Bebidas', emoji: '🥤' },
-  { id: 'item-8', nome: 'Torrone', descricao: 'Doce de amendoim', preco: 1.5, categoria: 'Sobremesas', emoji: '🍬' },
-  { id: 'item-9', nome: 'Iogurte', descricao: 'Copo individual', preco: 5.5, categoria: 'Sobremesas', emoji: '🥛' },
-  { id: 'item-10', nome: 'Suco pequeno', descricao: 'Caixinha individual', preco: 4, categoria: 'Bebidas', emoji: '🧃' },
-  { id: 'item-11', nome: 'Leite fermentado', descricao: 'Garrafinha individual', preco: 5, categoria: 'Bebidas', emoji: '🥛' }
+  { id: 'item-1', nome: 'Hamburgão', descricao: 'Hambúrguer da cantina', preco: 7.5, categoria: 'Lanches', emoji: '🍔', estoque: 20 },
+  { id: 'item-2', nome: 'Salgados variados', descricao: 'Escolha o seu salgado favorito', preco: 6.5, categoria: 'Salgados', emoji: '🥟', estoque: 15 },
+  { id: 'item-3', nome: 'Água com gás', descricao: 'Garrafa pequena', preco: 2.5, categoria: 'Bebidas', emoji: '💧', estoque: 30 },
+  { id: 'item-4', nome: 'Água sem gás', descricao: 'Garrafa pequena', preco: 2.5, categoria: 'Bebidas', emoji: '💧', estoque: 30 },
+  { id: 'item-5', nome: 'Barinha de cereais', descricao: 'Crocante e prática', preco: 2.5, categoria: 'Sobremesas', emoji: '🍫', estoque: 25 },
+  { id: 'item-6', nome: 'Bolinho', descricao: 'Feito na cantina', preco: 3.5, categoria: 'Sobremesas', emoji: '🧁', estoque: 20 },
+  { id: 'item-7', nome: 'Todynho', descricao: 'Bebida de chocolate', preco: 1.5, categoria: 'Bebidas', emoji: '🥤', estoque: 40 },
+  { id: 'item-8', nome: 'Torrone', descricao: 'Doce de amendoim', preco: 1.5, categoria: 'Sobremesas', emoji: '🍬', estoque: 20 },
+  { id: 'item-9', nome: 'Iogurte', descricao: 'Copo individual', preco: 5.5, categoria: 'Sobremesas', emoji: '🥛', estoque: 15 },
+  { id: 'item-10', nome: 'Suco pequeno', descricao: 'Caixinha individual', preco: 4, categoria: 'Bebidas', emoji: '🧃', estoque: 30 },
+  { id: 'item-11', nome: 'Leite fermentado', descricao: 'Garrafinha individual', preco: 5, categoria: 'Bebidas', emoji: '🥛', estoque: 20 }
 ];
 
 const STATUS = ['Recebido', 'Preparando', 'Pronto', 'Entregue'];
@@ -62,9 +66,22 @@ const el = {
   itemNome: $('#item-nome'),
   itemDescricao: $('#item-descricao'),
   itemPreco: $('#item-preco'),
+  itemEstoque: $('#item-estoque'),
   itemCategoria: $('#item-categoria'),
   itemEmoji: $('#item-emoji'),
+  btnSalvarItem: $('#btn-salvar-item'),
+  btnCancelarEdicao: $('#btn-cancelar-edicao'),
   listaCustom: $('#lista-custom'),
+  formAuth: $('#form-auth'),
+  authUsuario: $('#auth-usuario'),
+  authSenha: $('#auth-senha'),
+  authConfirmar: $('#auth-confirmar'),
+  campoConfirmar: $('#campo-confirmar'),
+  btnEntrar: $('#btn-entrar'),
+  authLogado: $('#auth-logado'),
+  nomeLogado: $('#nome-logado'),
+  btnSair: $('#btn-sair'),
+  adminConteudo: $('#admin-conteudo'),
   btnLimpar: $('#btn-limpar'),
   toast: $('#toast')
 };
@@ -111,6 +128,122 @@ function mostrarMensagem(texto) {
   timerToast = setTimeout(() => el.toast.classList.remove('visivel'), 3200);
 }
 
+// ---------- Cardápio: alterações, exclusões e estoque ----------
+
+function montarCardapio() {
+  const itens = [...CARDAPIO_PADRAO, ...cardapioCustom]
+    .filter((item) => !cardapioExcluidos.includes(item.id));
+
+  return itens.map((item) => {
+    const editado = cardapioEditados[item.id] || {};
+    const final = { ...item, ...editado };
+    if (Object.prototype.hasOwnProperty.call(cardapioEstoque, item.id)) {
+      final.estoque = cardapioEstoque[item.id];
+    }
+    return { ...final, estoque: Number(final.estoque) || 0 };
+  });
+}
+
+function salvarCardapio() {
+  salvar(CHAVES.cardapioCustom, cardapioCustom);
+  salvar(CHAVES.cardapioEditados, cardapioEditados);
+  salvar(CHAVES.cardapioExcluidos, cardapioExcluidos);
+  salvar(CHAVES.cardapioEstoque, cardapioEstoque);
+}
+
+function recarregarCardapio() {
+  cardapio = montarCardapio();
+}
+
+function darBaixaNoEstoque(itens) {
+  itens.forEach(({ item, quantidade }) => {
+    const atual = Number(cardapioEstoque[item.id] ?? item.estoque) || 0;
+    cardapioEstoque[item.id] = Math.max(0, atual - quantidade);
+  });
+  salvar(CHAVES.cardapioEstoque, cardapioEstoque);
+  recarregarCardapio();
+}
+
+// ---------- Login do responsável ----------
+
+// Hash simples para não guardar a senha em texto puro.
+// Atenção: isto não é segurança de verdade — tudo fica neste navegador.
+function hashSenha(senha) {
+  let hash = 5381;
+  for (let i = 0; i < senha.length; i += 1) {
+    hash = ((hash << 5) + hash + senha.charCodeAt(i)) | 0;
+  }
+  return String(hash);
+}
+
+function renderizarAdmin() {
+  const logado = Boolean(sessao);
+  el.formAuth.hidden = logado;
+  el.authLogado.hidden = !logado;
+  el.adminConteudo.hidden = !logado;
+  if (logado) el.nomeLogado.textContent = sessao;
+}
+
+function limparCamposAuth() {
+  el.authUsuario.value = '';
+  el.authSenha.value = '';
+  el.authConfirmar.value = '';
+}
+
+function criarConta(evento) {
+  evento.preventDefault();
+
+  const usuario = el.authUsuario.value.trim();
+  const senha = el.authSenha.value;
+  const confirmar = el.authConfirmar.value;
+
+  if (!usuario || senha.length < 4) {
+    mostrarMensagem('Use um usuário e uma senha com pelo menos 4 caracteres.');
+    return;
+  }
+  if (senha !== confirmar) {
+    mostrarMensagem('As senhas não são iguais.');
+    return;
+  }
+  if (usuarios.some((conta) => conta.usuario.toLowerCase() === usuario.toLowerCase())) {
+    mostrarMensagem('Esse usuário já existe. Clique em Entrar.');
+    return;
+  }
+
+  usuarios.push({ usuario, senha: hashSenha(senha) });
+  sessao = usuario;
+  salvar(CHAVES.usuarios, usuarios);
+  salvar(CHAVES.sessao, sessao);
+  limparCamposAuth();
+  renderizarTudo();
+  mostrarMensagem('Conta criada! Você já está logado.');
+}
+
+function entrar() {
+  const usuario = el.authUsuario.value.trim();
+  const senha = el.authSenha.value;
+  const conta = usuarios.find((item) =>
+    item.usuario.toLowerCase() === usuario.toLowerCase() && item.senha === hashSenha(senha));
+
+  if (!conta) {
+    mostrarMensagem('Usuário ou senha incorretos.');
+    return;
+  }
+
+  sessao = conta.usuario;
+  salvar(CHAVES.sessao, sessao);
+  limparCamposAuth();
+  renderizarTudo();
+  mostrarMensagem(`Bem-vindo, ${sessao}!`);
+}
+
+function sair() {
+  sessao = null;
+  salvar(CHAVES.sessao, sessao);
+  renderizarTudo();
+  mostrarMensagem('Você saiu da conta.');
+}
+
 // ---------- Tema claro / escuro ----------
 
 function aplicarTema() {
@@ -122,12 +255,18 @@ function aplicarTema() {
 
 // ---------- Estado do app (dados carregados) ----------
 let cardapioCustom = ler(CHAVES.cardapioCustom, []);
-let cardapio = [...CARDAPIO_PADRAO, ...cardapioCustom];
+let cardapioEditados = ler(CHAVES.cardapioEditados, {});
+let cardapioExcluidos = ler(CHAVES.cardapioExcluidos, []);
+let cardapioEstoque = ler(CHAVES.cardapioEstoque, {});
+let usuarios = ler(CHAVES.usuarios, []);
+let sessao = ler(CHAVES.sessao, null);
+let editandoId = null;
 let carrinho = ler(CHAVES.carrinho, {}); // objeto: { "id-do-item": quantidade }
 let pedidos = ler(CHAVES.pedidos, []);
 let cliente = ler(CHAVES.cliente, { nome: '', turma: '' });
 let tema = ler(CHAVES.tema, 'claro');
 let filtroAtual = 'Todos';
+let cardapio = montarCardapio();
 
 // ---------- Cardápio ----------
 
@@ -151,7 +290,10 @@ function renderizarCardapio() {
     return;
   }
 
-  el.grade.innerHTML = itens.map((item) => `
+  el.grade.innerHTML = itens.map((item) => {
+    const estoque = Number(item.estoque) || 0;
+    const esgotado = estoque === 0;
+    return `
     <article class="item-card">
       <div class="item-emoji">${escapar(item.emoji)}</div>
       <div class="item-info">
@@ -160,12 +302,15 @@ function renderizarCardapio() {
         <p>${escapar(item.descricao)}</p>
       </div>
       <div class="item-bottom">
-        <strong class="preco">${dinheiro(item.preco)}</strong>
+        <div>
+          <strong class="preco">${dinheiro(item.preco)}</strong>
+          <span class="item-estoque ${esgotado ? 'esgotado' : ''}">${esgotado ? 'Esgotado' : `Estoque: ${estoque}`}</span>
+        </div>
         <button type="button" class="botao-primario botao-pequeno"
-                data-acao="adicionar" data-id="${escapar(item.id)}">Adicionar +</button>
+                data-acao="adicionar" data-id="${escapar(item.id)}" ${esgotado ? 'disabled' : ''}>${esgotado ? 'Esgotado' : 'Adicionar +'}</button>
       </div>
-    </article>
-  `).join('');
+    </article>`;
+  }).join('');
 }
 
 // ---------- Carrinho ----------
@@ -202,12 +347,12 @@ function renderizarCarrinho() {
       <div class="emoji">${escapar(item.emoji)}</div>
       <div>
         <h4>${escapar(item.nome)}</h4>
-        <small>${dinheiro(item.preco)} cada</small>
+        <small>${dinheiro(item.preco)} cada • estoque: ${Number(item.estoque) || 0}</small>
       </div>
       <div class="controles">
         <button type="button" data-acao="diminuir" data-id="${escapar(item.id)}" aria-label="Diminuir quantidade">−</button>
         <span class="quantidade">${quantidade}</span>
-        <button type="button" data-acao="aumentar" data-id="${escapar(item.id)}" aria-label="Aumentar quantidade">+</button>
+        <button type="button" data-acao="aumentar" data-id="${escapar(item.id)}" aria-label="Aumentar quantidade" ${quantidade >= (Number(item.estoque) || 0) ? 'disabled' : ''}>+</button>
         <button type="button" class="remover" data-acao="remover" data-id="${escapar(item.id)}" aria-label="Remover item">✕</button>
       </div>
     </div>
@@ -215,7 +360,14 @@ function renderizarCarrinho() {
 }
 
 function alterarQuantidade(id, delta) {
+  const item = cardapio.find((produto) => produto.id === id);
   const novaQuantidade = (carrinho[id] || 0) + delta;
+
+  if (item && novaQuantidade > (Number(item.estoque) || 0)) {
+    mostrarMensagem(`Só há ${item.estoque} unidades de ${item.nome} no estoque.`);
+    return;
+  }
+
   if (novaQuantidade <= 0) {
     delete carrinho[id];
   } else {
@@ -327,6 +479,13 @@ function finalizarPedido(evento) {
   const itens = itensDoCarrinho();
   if (itens.length === 0) return;
 
+  for (const { item, quantidade } of itens) {
+    if (quantidade > (Number(item.estoque) || 0)) {
+      mostrarMensagem(`Sem estoque suficiente de ${item.nome}.`);
+      return;
+    }
+  }
+
   const nome = el.nome.value.trim();
   const turma = el.turma.value.trim();
   if (!nome || !turma) {
@@ -355,6 +514,7 @@ function finalizarPedido(evento) {
   carrinho = {};
   salvar(CHAVES.pedidos, pedidos);
   salvar(CHAVES.carrinho, carrinho);
+  darBaixaNoEstoque(itens);
 
   renderizarTudo();
   fecharCarrinho();
@@ -362,50 +522,121 @@ function finalizarPedido(evento) {
   $('#pedidos').scrollIntoView({ behavior: 'smooth' });
 }
 
-// ---------- Gerenciamento do cardápio ----------
+// ---------- Gerenciamento de produtos (CRUD) ----------
 
-function renderizarItensPersonalizados() {
-  const personalizados = cardapio.filter((item) => item.id.startsWith('custom-'));
+function resetarFormItem() {
+  editandoId = null;
+  el.formItem.reset();
+  el.itemEstoque.value = 10;
+  el.btnSalvarItem.textContent = 'Adicionar item';
+  el.btnCancelarEdicao.hidden = true;
+}
 
-  if (personalizados.length === 0) {
-    el.listaCustom.innerHTML = '<small style="color:#78716c">Nenhum item personalizado ainda.</small>';
+function renderizarListaAdmin() {
+  if (!sessao) return;
+
+  el.listaCustom.className = 'lista-admin';
+
+  if (cardapio.length === 0) {
+    el.listaCustom.innerHTML = '<p class="vazio">Nenhum produto cadastrado.</p>';
     return;
   }
 
-  el.listaCustom.innerHTML = personalizados.map((item) => `
-    <span class="chip">${escapar(item.emoji)} ${escapar(item.nome)}
-      <button type="button" data-acao="remover-item" data-id="${escapar(item.id)}" aria-label="Remover item do cardápio">✕</button>
-    </span>
-  `).join('');
+  el.listaCustom.innerHTML = cardapio.map((item) => {
+    const estoque = Number(item.estoque) || 0;
+    return `
+      <div class="produto-admin">
+        <div>
+          <strong>${escapar(item.emoji)} ${escapar(item.nome)}</strong>
+          <small>${escapar(item.categoria)} • ${dinheiro(item.preco)}</small>
+        </div>
+        <div class="produto-admin-acoes">
+          <span class="estoque ${estoque === 0 ? 'estoque-zero' : ''}">Estoque: ${estoque}</span>
+          <button type="button" class="botao-secundario" data-acao="editar-item" data-id="${escapar(item.id)}">Editar</button>
+          <button type="button" class="botao-texto" data-acao="excluir-item" data-id="${escapar(item.id)}">Excluir</button>
+        </div>
+      </div>`;
+  }).join('');
 }
 
-function adicionarItemPersonalizado(evento) {
+function salvarItemAdmin(evento) {
   evento.preventDefault();
 
   const nome = el.itemNome.value.trim();
   const preco = Number(el.itemPreco.value);
+  const estoque = Number(el.itemEstoque.value);
 
   if (!nome || !Number.isFinite(preco) || preco <= 0) {
     mostrarMensagem('Informe um nome e um preço válidos.');
     return;
   }
+  if (!Number.isInteger(estoque) || estoque < 0) {
+    mostrarMensagem('Informe um estoque válido (número inteiro, pode ser 0).');
+    return;
+  }
 
-  const novoItem = {
-    id: 'custom-' + Date.now(),
+  const dados = {
     nome,
     descricao: el.itemDescricao.value.trim() || 'Item do cardápio',
     preco,
+    estoque,
     categoria: el.itemCategoria.value,
     emoji: el.itemEmoji.value.trim() || '🍽️'
   };
 
-  cardapioCustom.push(novoItem);
-  cardapio.push(novoItem);
-  salvar(CHAVES.cardapioCustom, cardapioCustom);
-  filtroAtual = 'Todos';
-  el.formItem.reset();
+  if (editandoId) {
+    cardapioEditados[editandoId] = { ...(cardapioEditados[editandoId] || {}), ...dados };
+    cardapioEstoque[editandoId] = estoque;
+    mostrarMensagem('Produto atualizado!');
+  } else {
+    const id = 'custom-' + Date.now();
+    cardapioCustom.push({ id, ...dados });
+    cardapioEstoque[id] = estoque;
+    filtroAtual = 'Todos';
+    mostrarMensagem('Produto adicionado ao cardápio!');
+  }
+
+  salvarCardapio();
+  recarregarCardapio();
+  resetarFormItem();
   renderizarTudo();
-  mostrarMensagem('Item adicionado ao cardápio!');
+}
+
+function prepararEdicao(id) {
+  const item = cardapio.find((produto) => produto.id === id);
+  if (!item) return;
+
+  editandoId = id;
+  el.itemNome.value = item.nome;
+  el.itemDescricao.value = item.descricao || '';
+  el.itemPreco.value = item.preco;
+  el.itemEstoque.value = Number(item.estoque) || 0;
+  el.itemCategoria.value = item.categoria;
+  el.itemEmoji.value = item.emoji || '🍽️';
+  el.btnSalvarItem.textContent = 'Salvar alterações';
+  el.btnCancelarEdicao.hidden = false;
+  el.formItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  el.itemNome.focus();
+}
+
+function excluirItem(id) {
+  const item = cardapio.find((produto) => produto.id === id);
+  if (!item) return;
+  if (!confirm(`Excluir "${item.nome}" do cardápio?`)) return;
+
+  cardapioCustom = cardapioCustom.filter((produto) => produto.id !== id);
+  if (!cardapioExcluidos.includes(id)) cardapioExcluidos.push(id);
+  delete cardapioEditados[id];
+  delete cardapioEstoque[id];
+  delete carrinho[id];
+
+  if (editandoId === id) resetarFormItem();
+
+  salvarCardapio();
+  salvar(CHAVES.carrinho, carrinho);
+  recarregarCardapio();
+  renderizarTudo();
+  mostrarMensagem(`${item.nome} foi excluído.`);
 }
 
 // ---------- Renderização geral ----------
@@ -416,7 +647,8 @@ function renderizarTudo() {
   renderizarCarrinho();
   renderizarPedidos();
   renderizarPessoas();
-  renderizarItensPersonalizados();
+  renderizarAdmin();
+  renderizarListaAdmin();
 }
 
 // ---------- Eventos ----------
@@ -437,7 +669,14 @@ document.addEventListener('click', (evento) => {
   }
 
   if (acao === 'adicionar') {
-    carrinho[id] = (carrinho[id] || 0) + 1;
+    const item = cardapio.find((produto) => produto.id === id);
+    if (!item) return;
+    const quantidade = (carrinho[id] || 0) + 1;
+    if (quantidade > (Number(item.estoque) || 0)) {
+      mostrarMensagem(`Só há ${item.estoque} unidades de ${item.nome} no estoque.`);
+      return;
+    }
+    carrinho[id] = quantidade;
     salvar(CHAVES.carrinho, carrinho);
     renderizarCarrinho();
     mostrarMensagem('Adicionado ao carrinho!');
@@ -468,14 +707,8 @@ document.addEventListener('click', (evento) => {
     renderizarPedidos();
   }
 
-  if (acao === 'remover-item') {
-    cardapioCustom = cardapioCustom.filter((item) => item.id !== id);
-    cardapio = cardapio.filter((item) => item.id !== id);
-    delete carrinho[id];
-    salvar(CHAVES.cardapioCustom, cardapioCustom);
-    salvar(CHAVES.carrinho, carrinho);
-    renderizarTudo();
-  }
+  if (acao === 'editar-item') prepararEdicao(id);
+  if (acao === 'excluir-item') excluirItem(id);
 });
 
 el.botaoTema.addEventListener('click', () => {
@@ -492,7 +725,11 @@ document.addEventListener('keydown', (evento) => {
 });
 
 el.formPedido.addEventListener('submit', finalizarPedido);
-el.formItem.addEventListener('submit', adicionarItemPersonalizado);
+el.formItem.addEventListener('submit', salvarItemAdmin);
+el.formAuth.addEventListener('submit', criarConta);
+el.btnEntrar.addEventListener('click', entrar);
+el.btnSair.addEventListener('click', sair);
+el.btnCancelarEdicao.addEventListener('click', resetarFormItem);
 
 // Lembra nome e turma enquanto a pessoa digita.
 [el.nome, el.turma].forEach((campo) => campo.addEventListener('input', () => {
@@ -501,18 +738,25 @@ el.formItem.addEventListener('submit', adicionarItemPersonalizado);
 }));
 
 el.btnLimpar.addEventListener('click', () => {
-  if (!confirm('Apagar os itens personalizados, o carrinho e todos os pedidos salvos?')) return;
+  if (!confirm('Apagar produtos criados, alterações, estoque, contas, carrinho e todos os pedidos salvos?')) return;
 
   [...Object.values(CHAVES), ...CHAVES_ANTIGAS].forEach((chave) => localStorage.removeItem(chave));
   cardapioCustom = [];
-  cardapio = CARDAPIO_PADRAO.slice();
+  cardapioEditados = {};
+  cardapioExcluidos = [];
+  cardapioEstoque = {};
+  usuarios = [];
+  sessao = null;
   carrinho = {};
   pedidos = [];
   cliente = { nome: '', turma: '' };
   tema = 'claro';
+  filtroAtual = 'Todos';
   el.nome.value = '';
   el.turma.value = '';
-  filtroAtual = 'Todos';
+  limparCamposAuth();
+  resetarFormItem();
+  recarregarCardapio();
   aplicarTema();
   renderizarTudo();
   mostrarMensagem('Dados apagados. Cardápio original restaurado.');

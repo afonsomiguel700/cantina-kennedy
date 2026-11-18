@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cantina do Kennedy | Peça seu lanche</title>
-  <link rel="stylesheet" href="style.css?v=2">
+  <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
 
@@ -73,35 +73,70 @@
     </section>
 
     <!-- Área para o responsável pela cantina -->
-    <section class="secao">
+    <section class="secao" id="admin">
       <details class="admin">
-        <summary>⚙️ Gerenciar cardápio (responsáveis pela cantina)</summary>
-        <form class="form-item" id="form-item">
-          <label class="campo">Nome do item
-            <input id="item-nome" type="text" placeholder="Ex.: Pão de queijo" required>
-          </label>
-          <label class="campo">Descrição
-            <input id="item-descricao" type="text" placeholder="Ex.: Feito na hora">
-          </label>
-          <label class="campo">Preço (R$)
-            <input id="item-preco" type="number" min="0.01" step="0.01" placeholder="4.50" required>
-          </label>
-          <label class="campo">Categoria
-            <select id="item-categoria">
-              <option>Lanches</option>
-              <option>Salgados</option>
-              <option>Bebidas</option>
-              <option>Sobremesas</option>
-              <option>Outros</option>
-            </select>
-          </label>
-          <label class="campo">Emoji
-            <input id="item-emoji" type="text" maxlength="2" placeholder="🧀" value="🍽️">
-          </label>
-          <button class="botao-primario" type="submit">Adicionar item</button>
-        </form>
-        <div class="lista-custom" id="lista-custom"></div>
-        <button class="botao-texto" id="btn-limpar" type="button">Limpar todos os dados salvos</button>
+        <summary>⚙️ Gerenciar produtos (responsáveis pela cantina)</summary>
+
+        <div class="auth-area">
+          <form class="form-auth" id="form-auth">
+            <h3>🔐 Acesso do responsável</h3>
+            <p class="auth-dica" id="auth-dica">Crie sua conta (repita a senha no campo abaixo) ou entre com uma conta já criada. Este acesso vale somente neste navegador.</p>
+            <label class="campo">Usuário
+              <input id="auth-usuario" type="text" placeholder="Seu usuário" autocomplete="username" required>
+            </label>
+            <label class="campo">Senha
+              <input id="auth-senha" type="password" placeholder="Pelo menos 4 caracteres" autocomplete="new-password" required>
+            </label>
+            <label class="campo" id="campo-confirmar">Confirmar senha
+              <input id="auth-confirmar" type="password" placeholder="Repita a senha" autocomplete="new-password">
+            </label>
+            <div class="auth-botoes">
+              <button class="botao-primario" id="btn-criar-conta" type="submit">Criar minha conta</button>
+              <button class="botao-secundario" id="btn-entrar" type="button">Entrar</button>
+            </div>
+          </form>
+          <div class="auth-logado" id="auth-logado" hidden>
+            <span>✅ Logado como <strong id="nome-logado"></strong></span>
+            <button class="botao-texto" id="btn-sair" type="button">Sair</button>
+          </div>
+        </div>
+
+        <div class="admin-conteudo" id="admin-conteudo" hidden>
+          <h3>Produtos e estoque</h3>
+          <p class="secao-sub">Edite preço, categoria ou quantidade. Ao finalizar um pedido, o estoque baixa automaticamente.</p>
+          <form class="form-item" id="form-item">
+            <label class="campo">Nome do item
+              <input id="item-nome" type="text" placeholder="Ex.: Pão de queijo" required>
+            </label>
+            <label class="campo">Descrição
+              <input id="item-descricao" type="text" placeholder="Ex.: Feito na hora">
+            </label>
+            <label class="campo">Preço (R$)
+              <input id="item-preco" type="number" min="0.01" step="0.01" placeholder="4.50" required>
+            </label>
+            <label class="campo">Estoque (quantidade)
+              <input id="item-estoque" type="number" min="0" step="1" value="10" required>
+            </label>
+            <label class="campo">Categoria
+              <select id="item-categoria">
+                <option>Lanches</option>
+                <option>Salgados</option>
+                <option>Bebidas</option>
+                <option>Sobremesas</option>
+                <option>Outros</option>
+              </select>
+            </label>
+            <label class="campo">Emoji
+              <input id="item-emoji" type="text" maxlength="2" placeholder="🧀" value="🍽️">
+            </label>
+            <div class="admin-form-botoes">
+              <button class="botao-primario" id="btn-salvar-item" type="submit">Adicionar item</button>
+              <button class="botao-texto" id="btn-cancelar-edicao" type="button" hidden>Cancelar edição</button>
+            </div>
+          </form>
+          <div class="lista-custom" id="lista-custom"></div>
+          <button class="botao-texto" id="btn-limpar" type="button">Limpar todos os dados salvos</button>
+        </div>
       </details>
     </section>
   </main>
@@ -137,6 +172,6 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script src="app.js?v=2"></script>
+  <script src="app.js?v=3"></script>
 </body>
 </html>

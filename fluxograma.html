@@ -40,10 +40,10 @@ flowchart TD
 
     INICIO --> CARREGA --> TEMA --> RENDER --> MENU
 
-    MENU -->|"Ver cardápio"| CARDAPIO["Seção Cardápio"]
+    MENU -->|"Ver cardápio"| CARDAPIO["Seção Cardápio<br/>mostra preço e estoque"]
     CARDAPIO --> FILTRO["Filtrar por categoria:<br/>Todos, Lanches, Salgados,<br/>Bebidas, Sobremesas, Outros"]
     FILTRO --> CARDAPIO
-    CARDAPIO -->|"Adicionar +"| ADICIONAR["Adiciona 1 unidade ao carrinho<br/>e salva no navegador"]
+    CARDAPIO -->|"Adicionar +"| ADICIONAR["Adiciona 1 unidade se houver estoque<br/>e salva no navegador"]
     ADICIONAR --> ATUALIZA["Atualiza contador 🛒 e total"]
     ATUALIZA --> MENU
 
@@ -56,7 +56,8 @@ flowchart TD
     AVISO --> CARRINHO
     VALIDA -->|"Sim"| CRIA["Cria pedido #101, #102...<br/>status inicial: Recebido"]
     CRIA --> SALVA["Salva pedido e esvazia carrinho<br/>no localStorage"]
-    SALVA --> SUCESSO["✅ Aviso de sucesso<br/>rola a página para Meus pedidos"]
+    SALVA --> BAIXA["Estoque dos produtos<br/>baixa automaticamente"]
+    BAIXA --> SUCESSO["✅ Aviso de sucesso<br/>rola a página para Meus pedidos"]
     SUCESSO --> MENU
 
     MENU -->|"Meus pedidos"| PEDIDOS["Mostra pedidos:<br/>número, data, itens e total"]
@@ -70,14 +71,21 @@ flowchart TD
     PESSOAS --> CARDPESSOA["Mostra para cada pessoa:<br/>pedidos, total gasto e último pedido"]
     CARDPESSOA --> MENU
 
-    MENU -->|"Gerenciar cardápio"| ADMIN["⚙️ Área do responsável"]
-    ADMIN --> NOVO["Adicionar item personalizado<br/>nome, preço, categoria e emoji"]
-    NOVO --> SALVACUSTOM["Salva no navegador<br/>item aparece no cardápio"]
-    ADMIN --> REMOVE["Remover item personalizado"]
-    ADMIN --> LIMPAR["Limpar todos os dados<br/>pede confirmação e restaura o original"]
+    MENU -->|"Gerenciar produtos"| LOGIN{"Responsável está logado?"}
+    LOGIN -->|"Não"| CRIARCONTA["Criar conta com usuário e senha<br/>ou entrar com conta existente"]
+    CRIARCONTA --> LOGIN
+    LOGIN -->|"Sim"| ADMIN["⚙️ Área do responsável"]
+    ADMIN --> NOVO["Cadastrar produto:<br/>nome, preço, categoria,<br/>emoji e estoque"]
+    ADMIN --> EDITAR["Editar produto:<br/>preço, categoria e estoque"]
+    ADMIN --> REMOVE["Excluir produto<br/>pede confirmação"]
+    ADMIN --> LIMPAR["Limpar todos os dados<br/>pede confirmação"]
+    ADMIN --> SAIR["Sair da conta"]
+    NOVO --> SALVACUSTOM["Salva no navegador<br/>produto aparece no cardápio"]
+    EDITAR --> SALVACUSTOM
+    REMOVE --> SALVACUSTOM
     SALVACUSTOM --> MENU
-    REMOVE --> MENU
     LIMPAR --> MENU
+    SAIR --> LOGIN
 
     MENU -->|"Botão 🌙 / ☀️"| TROCATEMA["Troca tema claro/escuro<br/>e salva a escolha"]
     TROCATEMA --> MENU

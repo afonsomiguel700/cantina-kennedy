@@ -285,6 +285,31 @@ body.tema-escuro .status-3 { background: #44403c; color: #e7e5e4; }
 }
 .chip button { border: 0; background: var(--borda); color: var(--acento-texto); border-radius: 999px; width: 22px; height: 22px; line-height: 1; font-weight: 800; }
 
+/* ---------- Login e gerenciamento de produtos ---------- */
+.auth-area { padding: 12px 0 8px; }
+.form-auth { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; align-items: end; }
+.form-auth h3, .auth-dica, .auth-logado { grid-column: 1 / -1; }
+.form-auth h3 { margin: 4px 0 0; font-size: 1.05rem; }
+.auth-dica { margin: 0 0 6px; color: var(--muted); font-size: 0.85rem; }
+.auth-botoes, .admin-form-botoes { grid-column: 1 / -1; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.auth-logado { display: flex; justify-content: space-between; align-items: center; gap: 12px; background: var(--chip-fundo); border: 1px solid var(--borda); border-radius: 12px; padding: 10px 14px; }
+.admin-conteudo { padding-top: 10px; }
+.admin-conteudo h3 { margin: 8px 0 4px; font-size: 1.05rem; }
+.lista-admin { display: grid; gap: 8px; padding: 4px 0 16px; }
+.produto-admin { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; background: var(--campo); border: 1px solid var(--borda); border-radius: 12px; padding: 10px 12px; }
+.produto-admin strong { display: block; font-size: 0.95rem; }
+.produto-admin small { color: var(--muted); }
+.produto-admin-acoes { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.estoque { background: var(--chip-fundo); color: var(--acento-texto); border-radius: 999px; padding: 4px 10px; font-size: 0.8rem; font-weight: 800; }
+.estoque.estoque-zero { background: #fee2e2; color: #991b1b; }
+.item-estoque { display: block; margin-top: 2px; font-size: 0.8rem; font-weight: 800; color: var(--acento-texto); }
+.item-estoque.esgotado { color: #b91c1c; }
+.produto-admin small { display: block; margin-top: 2px; }
+.controles button:disabled { opacity: 0.4; cursor: not-allowed; }
+[hidden] { display: none !important; }
+body.tema-escuro .estoque.estoque-zero { background: #7f1d1d; color: #fee2e2; }
+body.tema-escuro .item-estoque.esgotado { color: #fca5a5; }
+
 footer { text-align: center; color: var(--muted); padding: 24px 20px 40px; font-size: 0.9rem; }
 
 /* ---------- Carrinho lateral ---------- */
