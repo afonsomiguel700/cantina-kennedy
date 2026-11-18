@@ -13,7 +13,6 @@ const CHAVES = {
   cardapioEditados: 'cantina.cardapio.editados',
   cardapioExcluidos: 'cantina.cardapio.excluidos',
   cardapioEstoque: 'cantina.cardapio.estoque',
-  usuarios: 'cantina.usuarios',
   sessao: 'cantina.sessao',
   carrinho: 'cantina.carrinho',
   pedidos: 'cantina.pedidos',
@@ -22,7 +21,8 @@ const CHAVES = {
 };
 
 // Chaves usadas por versões antigas do app (apagadas ao limpar os dados).
-const CHAVES_ANTIGAS = ['cantina.cardapio', 'cantina.cardapio.v2'];
+// 'cantina.usuarios' vinha do login com cadastro livre, que não existe mais.
+const CHAVES_ANTIGAS = ['cantina.cardapio', 'cantina.cardapio.v2', 'cantina.usuarios'];
 
 // Cardápio inicial (usado na primeira vez que o site é aberto)
 const CARDAPIO_PADRAO = [
@@ -40,6 +40,10 @@ const CARDAPIO_PADRAO = [
 ];
 
 const STATUS = ['Recebido', 'Preparando', 'Pronto', 'Entregue'];
+
+// Senha única do administrador. Só quem souber esta senha abre a área de gerenciamento.
+// Atenção: em um site sem servidor, a senha fica visível no código-fonte.
+const SENHA_ADMIN = '1234';
 
 // Atalho para buscar elementos do HTML
 const $ = (seletor) => document.querySelector(seletor);
@@ -73,11 +77,7 @@ const el = {
   btnCancelarEdicao: $('#btn-cancelar-edicao'),
   listaCustom: $('#lista-custom'),
   formAuth: $('#form-auth'),
-  authUsuario: $('#auth-usuario'),
   authSenha: $('#auth-senha'),
-  authConfirmar: $('#auth-confirmar'),
-  campoConfirmar: $('#campo-confirmar'),
-  btnEntrar: $('#btn-entrar'),
   authLogado: $('#auth-logado'),
   nomeLogado: $('#nome-logado'),
   btnSair: $('#btn-sair'),
@@ -164,84 +164,38 @@ function darBaixaNoEstoque(itens) {
   recarregarCardapio();
 }
 
-// ---------- Login do responsável ----------
-
-// Hash simples para não guardar a senha em texto puro.
-// Atenção: isto não é segurança de verdade — tudo fica neste navegador.
-function hashSenha(senha) {
-  let hash = 5381;
-  for (let i = 0; i < senha.length; i += 1) {
-    hash = ((hash << 5) + hash + senha.charCodeAt(i)) | 0;
-  }
-  return String(hash);
-}
+// ---------- Acesso do administrador (senha única) ----------
 
 function renderizarAdmin() {
-  const logado = Boolean(sessao);
+  const logado = sessao === 'admin';
   el.formAuth.hidden = logado;
   el.authLogado.hidden = !logado;
   el.adminConteudo.hidden = !logado;
-  if (logado) el.nomeLogado.textContent = sessao;
+  if (logado) el.nomeLogado.textContent = 'Administrador';
 }
 
-function limparCamposAuth() {
-  el.authUsuario.value = '';
-  el.authSenha.value = '';
-  el.authConfirmar.value = '';
-}
-
-function criarConta(evento) {
+function entrar(evento) {
   evento.preventDefault();
 
-  const usuario = el.authUsuario.value.trim();
-  const senha = el.authSenha.value;
-  const confirmar = el.authConfirmar.value;
-
-  if (!usuario || senha.length < 4) {
-    mostrarMensagem('Use um usuário e uma senha com pelo menos 4 caracteres.');
-    return;
-  }
-  if (senha !== confirmar) {
-    mostrarMensagem('As senhas não são iguais.');
-    return;
-  }
-  if (usuarios.some((conta) => conta.usuario.toLowerCase() === usuario.toLowerCase())) {
-    mostrarMensagem('Esse usuário já existe. Clique em Entrar.');
+  if (el.authSenha.value !== SENHA_ADMIN) {
+    mostrarMensagem('Senha incorreta.');
+    el.authSenha.value = '';
+    el.authSenha.focus();
     return;
   }
 
-  usuarios.push({ usuario, senha: hashSenha(senha) });
-  sessao = usuario;
-  salvar(CHAVES.usuarios, usuarios);
+  sessao = 'admin';
   salvar(CHAVES.sessao, sessao);
-  limparCamposAuth();
+  el.authSenha.value = '';
   renderizarTudo();
-  mostrarMensagem('Conta criada! Você já está logado.');
-}
-
-function entrar() {
-  const usuario = el.authUsuario.value.trim();
-  const senha = el.authSenha.value;
-  const conta = usuarios.find((item) =>
-    item.usuario.toLowerCase() === usuario.toLowerCase() && item.senha === hashSenha(senha));
-
-  if (!conta) {
-    mostrarMensagem('Usuário ou senha incorretos.');
-    return;
-  }
-
-  sessao = conta.usuario;
-  salvar(CHAVES.sessao, sessao);
-  limparCamposAuth();
-  renderizarTudo();
-  mostrarMensagem(`Bem-vindo, ${sessao}!`);
+  mostrarMensagem('Acesso liberado! Você está como administrador.');
 }
 
 function sair() {
   sessao = null;
   salvar(CHAVES.sessao, sessao);
   renderizarTudo();
-  mostrarMensagem('Você saiu da conta.');
+  mostrarMensagem('Você saiu do modo administrador.');
 }
 
 // ---------- Tema claro / escuro ----------
@@ -258,8 +212,8 @@ let cardapioCustom = ler(CHAVES.cardapioCustom, []);
 let cardapioEditados = ler(CHAVES.cardapioEditados, {});
 let cardapioExcluidos = ler(CHAVES.cardapioExcluidos, []);
 let cardapioEstoque = ler(CHAVES.cardapioEstoque, {});
-let usuarios = ler(CHAVES.usuarios, []);
-let sessao = ler(CHAVES.sessao, null);
+// Só aceita a sessão criada com a senha correta. Sessões antigas (de contas) não valem mais.
+let sessao = ler(CHAVES.sessao, null) === 'admin' ? 'admin' : null;
 let editandoId = null;
 let carrinho = ler(CHAVES.carrinho, {}); // objeto: { "id-do-item": quantidade }
 let pedidos = ler(CHAVES.pedidos, []);
@@ -726,8 +680,7 @@ document.addEventListener('keydown', (evento) => {
 
 el.formPedido.addEventListener('submit', finalizarPedido);
 el.formItem.addEventListener('submit', salvarItemAdmin);
-el.formAuth.addEventListener('submit', criarConta);
-el.btnEntrar.addEventListener('click', entrar);
+el.formAuth.addEventListener('submit', entrar);
 el.btnSair.addEventListener('click', sair);
 el.btnCancelarEdicao.addEventListener('click', resetarFormItem);
 
@@ -738,14 +691,13 @@ el.btnCancelarEdicao.addEventListener('click', resetarFormItem);
 }));
 
 el.btnLimpar.addEventListener('click', () => {
-  if (!confirm('Apagar produtos criados, alterações, estoque, contas, carrinho e todos os pedidos salvos?')) return;
+  if (!confirm('Apagar produtos criados, alterações, estoque, carrinho e todos os pedidos salvos?')) return;
 
   [...Object.values(CHAVES), ...CHAVES_ANTIGAS].forEach((chave) => localStorage.removeItem(chave));
   cardapioCustom = [];
   cardapioEditados = {};
   cardapioExcluidos = [];
   cardapioEstoque = {};
-  usuarios = [];
   sessao = null;
   carrinho = {};
   pedidos = [];
@@ -754,7 +706,7 @@ el.btnLimpar.addEventListener('click', () => {
   filtroAtual = 'Todos';
   el.nome.value = '';
   el.turma.value = '';
-  limparCamposAuth();
+  el.authSenha.value = '';
   resetarFormItem();
   recarregarCardapio();
   aplicarTema();
@@ -763,6 +715,7 @@ el.btnLimpar.addEventListener('click', () => {
 });
 
 // ---------- Início ----------
+if (sessao === null) localStorage.removeItem(CHAVES.sessao);
 el.nome.value = cliente.nome || '';
 el.turma.value = cliente.turma || '';
 aplicarTema();

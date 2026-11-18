@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cantina do Kennedy | Peça seu lanche</title>
-  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="style.css?v=4">
 </head>
 <body>
 
@@ -79,20 +79,13 @@
 
         <div class="auth-area">
           <form class="form-auth" id="form-auth">
-            <h3>🔐 Acesso do responsável</h3>
-            <p class="auth-dica" id="auth-dica">Crie sua conta (repita a senha no campo abaixo) ou entre com uma conta já criada. Este acesso vale somente neste navegador.</p>
-            <label class="campo">Usuário
-              <input id="auth-usuario" type="text" placeholder="Seu usuário" autocomplete="username" required>
-            </label>
-            <label class="campo">Senha
-              <input id="auth-senha" type="password" placeholder="Pelo menos 4 caracteres" autocomplete="new-password" required>
-            </label>
-            <label class="campo" id="campo-confirmar">Confirmar senha
-              <input id="auth-confirmar" type="password" placeholder="Repita a senha" autocomplete="new-password">
+            <h3>🔐 Acesso do administrador</h3>
+            <p class="auth-dica" id="auth-dica">Digite a senha do administrador para cadastrar, editar e excluir produtos.</p>
+            <label class="campo">Senha do administrador
+              <input id="auth-senha" type="password" placeholder="Digite a senha" autocomplete="current-password" required>
             </label>
             <div class="auth-botoes">
-              <button class="botao-primario" id="btn-criar-conta" type="submit">Criar minha conta</button>
-              <button class="botao-secundario" id="btn-entrar" type="button">Entrar</button>
+              <button class="botao-primario" id="btn-entrar" type="submit">Entrar</button>
             </div>
           </form>
           <div class="auth-logado" id="auth-logado" hidden>
@@ -172,6 +165,6 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script src="app.js?v=3"></script>
+  <script src="app.js?v=4"></script>
 </body>
 </html>

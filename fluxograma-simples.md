@@ -22,8 +22,8 @@ flowchart LR
 
     A --> B --> C --> D --> E --> F --> G --> H
 
-    B -.-> I["🔐 Responsável"]
-    I -.-> J["Criar conta ou entrar"]
+    B -.-> I["🔐 Administrador"]
+    I -.-> J["Digitar senha única"]
     J -.-> K["Cadastrar, editar,<br/>excluir e ajustar estoque"]
 
     classDef inicio fill:#166534,stroke:#14532d,color:#ffffff;

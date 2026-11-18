@@ -71,15 +71,15 @@ flowchart TD
     PESSOAS --> CARDPESSOA["Mostra para cada pessoa:<br/>pedidos, total gasto e último pedido"]
     CARDPESSOA --> MENU
 
-    MENU -->|"Gerenciar produtos"| LOGIN{"Responsável está logado?"}
-    LOGIN -->|"Não"| CRIARCONTA["Criar conta com usuário e senha<br/>ou entrar com conta existente"]
-    CRIARCONTA --> LOGIN
-    LOGIN -->|"Sim"| ADMIN["⚙️ Área do responsável"]
+    MENU -->|"Gerenciar produtos"| LOGIN{"Administrador está logado?"}
+    LOGIN -->|"Não"| DIGITARSENHA["Digitar senha única<br/>do administrador"]
+    DIGITARSENHA --> LOGIN
+    LOGIN -->|"Sim"| ADMIN["⚙️ Área do administrador"]
     ADMIN --> NOVO["Cadastrar produto:<br/>nome, preço, categoria,<br/>emoji e estoque"]
     ADMIN --> EDITAR["Editar produto:<br/>preço, categoria e estoque"]
     ADMIN --> REMOVE["Excluir produto<br/>pede confirmação"]
     ADMIN --> LIMPAR["Limpar todos os dados<br/>pede confirmação"]
-    ADMIN --> SAIR["Sair da conta"]
+    ADMIN --> SAIR["Sair do modo administrador"]
     NOVO --> SALVACUSTOM["Salva no navegador<br/>produto aparece no cardápio"]
     EDITAR --> SALVACUSTOM
     REMOVE --> SALVACUSTOM
