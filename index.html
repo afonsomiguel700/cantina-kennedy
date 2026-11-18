@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cantina do Kennedy | Peça seu lanche</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Cabeçalho fixo no topo da página -->
+  <header class="topo">
+    <div class="topo-interno">
+      <a class="marca" href="#inicio">
+        <span class="marca-icone">🍱</span> Cantina do Kennedy
+      </a>
+      <nav class="nav">
+        <a href="#cardapio">Cardápio</a>
+        <a href="#pedidos">Meus pedidos</a>
+      </nav>
+      <button class="botao-tema" id="alternar-tema" type="button" title="Mudar cor do fundo" aria-label="Mudar para o fundo escuro">🌙</button>
+      <button class="botao-carrinho" id="abrir-carrinho" type="button">
+        🛒 <span>Carrinho</span> <span class="badge" id="contador-carrinho">0</span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Apresentação -->
+    <section class="hero" id="inicio">
+      <div>
+        <span class="item-categoria">Direto da cantina</span>
+        <h1>Peça seu lanche sem perder tempo na fila.</h1>
+        <p>Escolha seus favoritos, monte o pedido e retire no balcão da cantina. Simples assim!</p>
+        <a class="botao-primario hero-cta" href="#cardapio">Ver cardápio ↓</a>
+      </div>
+      <div class="emoji" aria-hidden="true">🥪</div>
+    </section>
+
+    <!-- Cardápio -->
+    <section class="secao" id="cardapio">
+      <div class="secao-cabecalho">
+        <div>
+          <h2>Cardápio</h2>
+          <p class="secao-sub">Clique em “Adicionar” para colocar no carrinho.</p>
+        </div>
+      </div>
+      <div class="filtros" id="filtros"></div>
+      <div class="grade-cardapio" id="grade-cardapio"></div>
+    </section>
+
+    <!-- Pedidos feitos -->
+    <section class="secao" id="pedidos">
+      <div class="secao-cabecalho">
+        <div>
+          <h2>Meus pedidos</h2>
+          <p class="secao-sub">Acompanhe o andamento dos seus pedidos.</p>
+        </div>
+      </div>
+      <div class="lista-pedidos" id="lista-pedidos"></div>
+    </section>
+
+    <!-- Área para o responsável pela cantina -->
+    <section class="secao">
+      <details class="admin">
+        <summary>⚙️ Gerenciar cardápio (responsáveis pela cantina)</summary>
+        <form class="form-item" id="form-item">
+          <label class="campo">Nome do item
+            <input id="item-nome" type="text" placeholder="Ex.: Pão de queijo" required>
+          </label>
+          <label class="campo">Descrição
+            <input id="item-descricao" type="text" placeholder="Ex.: Feito na hora">
+          </label>
+          <label class="campo">Preço (R$)
+            <input id="item-preco" type="number" min="0.01" step="0.01" placeholder="4.50" required>
+          </label>
+          <label class="campo">Categoria
+            <select id="item-categoria">
+              <option>Lanches</option>
+              <option>Salgados</option>
+              <option>Bebidas</option>
+              <option>Sobremesas</option>
+              <option>Outros</option>
+            </select>
+          </label>
+          <label class="campo">Emoji
+            <input id="item-emoji" type="text" maxlength="2" placeholder="🧀" value="🍽️">
+          </label>
+          <button class="botao-primario" type="submit">Adicionar item</button>
+        </form>
+        <div class="lista-custom" id="lista-custom"></div>
+        <button class="botao-texto" id="btn-limpar" type="button">Limpar todos os dados salvos</button>
+      </details>
+    </section>
+  </main>
+
+  <footer>Feito para a Cantina do Kennedy 🧡 — os dados ficam salvos apenas neste navegador.</footer>
+
+  <!-- Carrinho lateral -->
+  <div class="fundo-carrinho" id="fundo-carrinho"></div>
+  <aside class="carrinho" id="carrinho" aria-hidden="true">
+    <div class="carrinho-cabecalho">
+      <h2>🛒 Seu carrinho</h2>
+      <button class="fechar" id="fechar-carrinho" type="button" aria-label="Fechar carrinho">✕</button>
+    </div>
+
+    <div class="itens-carrinho" id="itens-carrinho"></div>
+
+    <form class="carrinho-rodape" id="form-pedido">
+      <div class="total-linha">
+        <span>Total</span>
+        <span id="total-carrinho">R$ 0,00</span>
+      </div>
+      <div class="form-cliente">
+        <label class="campo">Seu nome
+          <input id="nome-cliente" type="text" placeholder="Ex.: Maria Silva" required>
+        </label>
+        <label class="campo">Turma
+          <input id="turma-cliente" type="text" placeholder="Ex.: 8º A" required>
+        </label>
+      </div>
+      <button class="botao-primario" id="btn-finalizar" type="submit">Finalizar pedido</button>
+    </form>
+  </aside>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
