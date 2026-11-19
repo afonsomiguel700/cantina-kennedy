@@ -644,6 +644,11 @@ function proximoNumero() {
   return pedidos.reduce((maior, pedido) => Math.max(maior, pedido.numero), 100) + 1;
 }
 
+// Pedidos salvos antes dessa versão podem não ter forma de pagamento.
+function pagamentoDoPedido(pedido) {
+  return String(pedido.pagamento || '').trim() || 'Não informado';
+}
+
 function renderizarPedidos() {
   if (pedidos.length === 0) {
     el.listaPedidos.innerHTML = '<p class="vazio">Você ainda não fez nenhum pedido. 🛒</p>';
@@ -664,6 +669,7 @@ function renderizarPedidos() {
           <span class="status status-${status}">${STATUS[status]}</span>
         </div>
         <p class="cliente">${escapar(pedido.nome)} • Turma ${escapar(pedido.turma)}</p>
+        <p class="pagamento-linha">💰 Pagamento: <strong>${escapar(pagamentoDoPedido(pedido))}</strong></p>
         <ul class="pedido-itens">
           ${pedido.itens.map((item) => `
             <li><span>${item.quantidade}× ${escapar(item.nome)}</span><span>${dinheiro(item.preco * item.quantidade)}</span></li>
@@ -742,6 +748,13 @@ function finalizarPedido(evento) {
     return;
   }
 
+  const pagamentoEscolhido = el.formPedido.querySelector('input[name="pagamento"]:checked');
+  if (!pagamentoEscolhido) {
+    mostrarMensagem('Escolha a forma de pagamento: cartão de débito, cartão de crédito ou dinheiro.');
+    return;
+  }
+  const pagamento = pagamentoEscolhido.value;
+
   cliente = { nome, turma };
   salvar(CHAVES.cliente, cliente);
 
@@ -749,6 +762,7 @@ function finalizarPedido(evento) {
     numero: proximoNumero(),
     nome,
     turma,
+    pagamento,
     itens: itens.map(({ item, quantidade }) => ({
       nome: item.nome,
       quantidade,
@@ -767,7 +781,7 @@ function finalizarPedido(evento) {
 
   renderizarTudo();
   fecharCarrinho();
-  mostrarMensagem(`Pedido #${pedido.numero} enviado com sucesso!`);
+  mostrarMensagem(`Pedido #${pedido.numero} enviado! Pagamento: ${pagamento}.`);
   $('#pedidos').scrollIntoView({ behavior: 'smooth' });
 }
 
@@ -1051,8 +1065,7 @@ el.btnLimpar.addEventListener('click', () => {
   cliente = { nome: '', turma: '' };
   tema = 'claro';
   filtroAtual = 'Todos';
-  el.nome.value = '';
-  el.turma.value = '';
+  el.formPedido.reset();
   el.formLogin.reset();
   el.formCriar.reset();
   el.loginCodigo.value = '';

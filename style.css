@@ -235,6 +235,8 @@ body.tema-escuro .status-1 { background: #1e3a8a; color: #bfdbfe; }
 body.tema-escuro .status-2 { background: #14532d; color: #bbf7d0; }
 body.tema-escuro .status-3 { background: #44403c; color: #e7e5e4; }
 .cliente { margin: 14px 0 8px; font-weight: 600; }
+.pagamento-linha { margin: 0 0 12px; font-size: 0.9rem; color: var(--texto-secundario); }
+.pagamento-linha strong { color: var(--acento-texto); }
 .pedido-itens { list-style: none; padding: 0; margin: 0 0 14px; display: grid; gap: 6px; }
 .pedido-itens li { display: flex; justify-content: space-between; color: var(--texto-secundario); }
 .pedido-rodape {
@@ -397,6 +399,14 @@ footer { text-align: center; color: var(--muted); padding: 24px 20px 40px; font-
 .total-linha span:last-child { color: var(--acento-texto); }
 .form-cliente { display: grid; gap: 10px; }
 .form-cliente .campo input { width: 100%; }
+
+/* Forma de pagamento no fechamento do pedido */
+.forma-pagamento { border: 0; margin: 0; padding: 0; display: grid; gap: 8px; }
+.forma-pagamento legend { font-weight: 800; padding: 0; }
+.pagamento-dica { margin: 0; color: var(--muted); font-size: 0.85rem; }
+.opcao-pagamento { display: flex; align-items: center; gap: 10px; border: 1px solid var(--borda); background: var(--cartao); border-radius: 12px; padding: 10px 12px; font-weight: 700; cursor: pointer; }
+.opcao-pagamento:has(input:checked) { border-color: var(--cor-principal); background: var(--chip-fundo); }
+.opcao-pagamento input { width: 18px; height: 18px; accent-color: var(--cor-principal); }
 
 /* ---------- Mensagem temporária ---------- */
 .toast {

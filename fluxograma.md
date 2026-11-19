@@ -29,16 +29,16 @@ flowchart TD
     CARRINHO --> AJUSTE{"Ajustar itens?"}
     AJUSTE -->|"+ / − / ✕"| QTDE["Aumenta, diminui ou remove o item<br/>salva e recalcula o total"]
     QTDE --> AJUSTE
-    AJUSTE -->|"Finalizar pedido"| VALIDA{"Nome e turma<br/>preenchidos?"}
-    VALIDA -->|"Não"| AVISO["⚠️ Aviso na tela:<br/>preencha nome e turma"]
+    AJUSTE -->|"Finalizar pedido"| VALIDA{"Nome, turma e forma de pagamento<br/>preenchidos?"}
+    VALIDA -->|"Não"| AVISO["⚠️ Aviso na tela:<br/>preencha nome, turma e escolha o pagamento"]
     AVISO --> CARRINHO
-    VALIDA -->|"Sim"| CRIA["Cria pedido #101, #102...<br/>status inicial: Recebido"]
+    VALIDA -->|"Sim"| CRIA["Cria pedido #101, #102...<br/>com a forma de pagamento escolhida<br/>status inicial: Recebido"]
     CRIA --> SALVA["Salva pedido e esvazia carrinho<br/>no localStorage"]
     SALVA --> BAIXA["Estoque dos produtos<br/>baixa automaticamente"]
     BAIXA --> SUCESSO["✅ Aviso de sucesso<br/>rola a página para Meus pedidos"]
     SUCESSO --> MENU
 
-    MENU -->|"Meus pedidos"| PEDIDOS["Mostra pedidos:<br/>número, data, itens e total"]
+    MENU -->|"Meus pedidos"| PEDIDOS["Mostra pedidos:<br/>número, data, itens,<br/>pagamento e total"]
     PEDIDOS --> ACAO{"Ação no pedido"}
     ACAO -->|"Avançar status"| STATUS["Recebido → Preparando →<br/>Pronto → Entregue ✅"]
     ACAO -->|"Excluir"| EXCLUI["Remove o pedido<br/>e salva no navegador"]

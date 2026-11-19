@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cantina do Kennedy | Peça seu lanche</title>
-  <link rel="stylesheet" href="style.css?v=10">
+  <link rel="stylesheet" href="style.css?v=11">
 </head>
 <body>
 
@@ -265,12 +265,28 @@
           <input id="turma-cliente" type="text" placeholder="Ex.: 8º A" required>
         </label>
       </div>
+      <fieldset class="forma-pagamento">
+        <legend>Forma de pagamento</legend>
+        <p class="pagamento-dica">Escolha como você vai pagar no balcão.</p>
+        <label class="opcao-pagamento">
+          <input type="radio" name="pagamento" value="Cartão de débito">
+          <span>💳 Cartão de débito</span>
+        </label>
+        <label class="opcao-pagamento">
+          <input type="radio" name="pagamento" value="Cartão de crédito">
+          <span>💳 Cartão de crédito</span>
+        </label>
+        <label class="opcao-pagamento">
+          <input type="radio" name="pagamento" value="Dinheiro">
+          <span>💵 Dinheiro</span>
+        </label>
+      </fieldset>
       <button class="botao-primario" id="btn-finalizar" type="submit">Finalizar pedido</button>
     </form>
   </aside>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script src="app.js?v=10"></script>
+  <script src="app.js?v=11"></script>
 </body>
 </html>

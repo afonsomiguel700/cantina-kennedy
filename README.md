@@ -8,6 +8,7 @@ Site para fazer pedidos de lanches da cantina.
 
 - Cardápio com preços e **estoque** de cada produto.
 - Carrinho com quantidades e total do pedido.
+- **Forma de pagamento** na finalização: cartão de débito, cartão de crédito ou dinheiro.
 - Nome e turma do cliente e acompanhamento do status (Recebido → Preparando → Pronto → Entregue).
 - Lista de **pessoas que já pediram** (sem senha).
 - **Histórico de login** salvo no dispositivo (nome, e-mail, tipo e data/hora — sem senha nem código).
@@ -48,6 +49,16 @@ Cada login feito com sucesso fica salvo no **localStorage deste navegador/dispos
 O botão **“Limpar histórico”** apaga só essa lista. O botão de limpar todos os dados também apaga o histórico. Se trocar de navegador, dispositivo ou apagar os dados do site, o histórico não vem junto.
 
 > ⚠️ Como o site é estático (GitHub Pages), ele **não envia e-mails sozinho**: o Gmail abre com a mensagem pronta e a pessoa clica em enviar. A idade é conferida pela data de nascimento informada — também não há verificação com documento. Tudo fica salvo somente neste navegador. Isso é uma separação simples para o projeto, não uma segurança de verdade.
+
+## 💳 Forma de pagamento
+
+Ao abrir o carrinho e clicar em **Finalizar pedido**, escolha uma das opções:
+
+- **💳 Cartão de débito**
+- **💳 Cartão de crédito**
+- **💵 Dinheiro**
+
+Se nenhuma estiver marcada, o site avisa e o pedido não é criado. A escolha fica salva junto com o pedido e aparece em **Meus pedidos**, na linha **Pagamento**. Pedidos feitos antes dessa opção aparecem como **Não informado**. A última escolha continua marcada no carrinho para o próximo pedido — basta trocar se quiser.
 
 ## Fluxograma simples (versão fácil)
 

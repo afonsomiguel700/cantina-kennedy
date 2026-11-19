@@ -14,7 +14,7 @@ flowchart LR
     A(["Abrir o site<br/>Cantina do Kennedy"])
     B["1. Ver cardápio<br/>preço e estoque"]
     C["2. Adicionar item ao carrinho"]
-    D["3. Digitar nome e turma"]
+    D["3. Digitar nome e turma<br/>e escolher o pagamento"]
     E["4. Finalizar pedido"]
     F["5. Estoque baixa<br/>automaticamente"]
     G["6. Acompanhar status<br/>até Entregue ✅"]
