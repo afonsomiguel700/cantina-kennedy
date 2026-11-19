@@ -14,6 +14,7 @@ const CHAVES = {
   cardapioExcluidos: 'cantina.cardapio.excluidos',
   cardapioEstoque: 'cantina.cardapio.estoque',
   contas: 'cantina.contas',
+  historicoLogin: 'cantina.historico.login',
   sessao: 'cantina.sessao',
   carrinho: 'cantina.carrinho',
   pedidos: 'cantina.pedidos',
@@ -98,6 +99,9 @@ const el = {
   senhaGerada: $('#senha-gerada'),
   linkGmail: $('#link-gmail'),
   authLogado: $('#auth-logado'),
+  historicoLogin: $('#historico-login'),
+  listaHistorico: $('#lista-historico'),
+  btnLimparHistorico: $('#btn-limpar-historico'),
   nomeLogado: $('#nome-logado'),
   tipoLogado: $('#tipo-logado'),
   btnSair: $('#btn-sair'),
@@ -295,6 +299,36 @@ function renderizarAdmin() {
   }
 }
 
+// Guarda no dispositivo os logins feitos com sucesso (nunca senha ou código).
+function registrarLogin(conta) {
+  const entrada = {
+    nome: conta.nome,
+    email: conta.email,
+    tipo: conta.tipo,
+    data: new Date().toISOString()
+  };
+  historicoLogin = [entrada, ...historicoLogin].slice(0, 30);
+  salvar(CHAVES.historicoLogin, historicoLogin);
+}
+
+function renderizarHistorico() {
+  el.historicoLogin.hidden = historicoLogin.length === 0;
+  el.listaHistorico.innerHTML = historicoLogin.map((entrada) => {
+    const data = new Date(entrada.data);
+    const quando = Number.isNaN(data.getTime())
+      ? ''
+      : data.toLocaleString('pt-BR', {
+        day: '2-digit', month: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+      });
+    const tipo = entrada.tipo === 'admin' ? 'administrador' : 'cliente';
+    return '<div class="item-historico">'
+      + `<span><strong>${escapar(entrada.nome)}</strong> <small>(${tipo})</small></span>`
+      + `<small>${escapar(entrada.email)} • ${escapar(quando)}</small>`
+      + '</div>';
+  }).join('');
+}
+
 function criarConta(evento) {
   evento.preventDefault();
 
@@ -352,6 +386,7 @@ function criarConta(evento) {
     alternarModo('login');
     sessao = { tipo: 'cliente', nome, email };
     salvar(CHAVES.sessao, sessao);
+    registrarLogin(conta);
     cliente = { nome, turma: conta.turma };
     salvar(CHAVES.cliente, cliente);
     el.nome.value = nome;
@@ -410,6 +445,7 @@ function confirmarCodigo() {
   const conta = codigoPendente.conta;
   sessao = { tipo: conta.tipo, nome: conta.nome, email: conta.email };
   salvar(CHAVES.sessao, sessao);
+  registrarLogin(conta);
 
   if (conta.tipo === 'cliente') {
     cliente = { nome: conta.nome, turma: conta.turma || '' };
@@ -466,6 +502,7 @@ let cardapioEditados = ler(CHAVES.cardapioEditados, {});
 let cardapioExcluidos = ler(CHAVES.cardapioExcluidos, []);
 let cardapioEstoque = ler(CHAVES.cardapioEstoque, {});
 let contas = ler(CHAVES.contas, []);
+let historicoLogin = ler(CHAVES.historicoLogin, []);
 let senhaPendente = null; // senha do admin só na memória, enquanto o e-mail não é enviado
 let codigoPendente = null; // código do login só na memória, nunca aparece no site
 let modoAuth = 'login';
@@ -860,6 +897,7 @@ function renderizarTudo() {
   renderizarPedidos();
   renderizarPessoas();
   renderizarAdmin();
+  renderizarHistorico();
   renderizarListaAdmin();
 }
 
@@ -947,6 +985,13 @@ el.abaCriar.addEventListener('click', () => {
 });
 el.btnSair.addEventListener('click', sair);
 el.btnSairTopo.addEventListener('click', sair);
+el.btnLimparHistorico.addEventListener('click', () => {
+  if (!confirm('Apagar o histórico de login salvo neste dispositivo?')) return;
+  historicoLogin = [];
+  salvar(CHAVES.historicoLogin, historicoLogin);
+  renderizarHistorico();
+  mostrarMensagem('Histórico de login apagado.');
+});
 el.btnCancelarEdicao.addEventListener('click', resetarFormItem);
 el.btnConfirmarCodigo.addEventListener('click', confirmarCodigo);
 el.btnCancelarCodigo.addEventListener('click', cancelarCodigo);
@@ -997,6 +1042,7 @@ el.btnLimpar.addEventListener('click', () => {
   cardapioExcluidos = [];
   cardapioEstoque = {};
   contas = [];
+  historicoLogin = [];
   sessao = null;
   senhaPendente = null;
   codigoPendente = null;
@@ -1024,6 +1070,7 @@ el.btnLimpar.addEventListener('click', () => {
 // ---------- Início ----------
 if (sessao === null) localStorage.removeItem(CHAVES.sessao);
 if (!Array.isArray(contas)) contas = [];
+if (!Array.isArray(historicoLogin)) historicoLogin = [];
 atualizarCamposCriacao();
 el.nome.value = cliente.nome || '';
 el.turma.value = cliente.turma || '';

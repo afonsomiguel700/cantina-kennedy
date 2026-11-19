@@ -24,6 +24,7 @@ flowchart LR
 
     B -.-> I["🧑‍🎓 Cliente"]
     I -.-> J["No início: entrar ou criar conta<br/>senha + código do Gmail"]
+    J -.-> N["Histórico de login salvo<br/>no dispositivo, sem senha"]
     B -.-> L["🛡️ Administrador"]
     L -.-> M["Senha só no Gmail<br/>e mais de 18 anos"]
     M -.-> K["Cadastrar, editar,<br/>excluir e ajustar estoque"]
@@ -35,5 +36,5 @@ flowchart LR
     class A,H inicio;
     class B,C,D,E,G acao;
     class F salvo;
-    class I,J,L,M,K extra;
+    class I,J,L,M,K,N extra;
 ```

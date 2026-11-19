@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cantina do Kennedy | Peça seu lanche</title>
-  <link rel="stylesheet" href="style.css?v=8">
+  <link rel="stylesheet" href="style.css?v=9">
 </head>
 <body>
 
@@ -150,6 +150,14 @@
           <span>✅ Logado como <strong id="nome-logado"></strong> <small id="tipo-logado"></small></span>
           <button class="botao-texto" id="btn-sair" type="button">Sair</button>
         </div>
+
+        <!-- Histórico de login salvo neste dispositivo -->
+        <div class="historico-login" id="historico-login" hidden>
+          <h3>🕘 Histórico de login neste dispositivo</h3>
+          <p class="auth-dica">Fica salvo só neste navegador. Guardamos nome, e-mail, tipo e data/hora — nunca senha nem código.</p>
+          <div class="lista-historico" id="lista-historico"></div>
+          <button class="botao-secundario" id="btn-limpar-historico" type="button">Limpar histórico</button>
+        </div>
       </div>
     </section>
 
@@ -263,6 +271,6 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script src="app.js?v=8"></script>
+  <script src="app.js?v=9"></script>
 </body>
 </html>

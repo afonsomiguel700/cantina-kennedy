@@ -10,6 +10,7 @@ Site para fazer pedidos de lanches da cantina.
 - Carrinho com quantidades e total do pedido.
 - Nome e turma do cliente e acompanhamento do status (Recebido → Preparando → Pronto → Entregue).
 - Lista de **pessoas que já pediram** (sem senha).
+- **Histórico de login** salvo no dispositivo (nome, e-mail, tipo e data/hora — sem senha nem código).
 - **Contas separadas**: cliente e administrador.
 - Área do administrador com **CRUD de produtos**: cadastrar, editar, excluir e ajustar estoque.
 - Ao finalizar um pedido, o estoque dos produtos baixa automaticamente.
@@ -39,6 +40,12 @@ Tanto cliente quanto administrador, ao escolher **Entrar**, precisam:
 3. Copiar o código do e-mail, digitá-lo no site e clicar em **“Confirmar e entrar”**.
 
 O código **não aparece no site**: fica só dentro do e-mail e na memória da aba. Se o e-mail não abriu, use **“Reabrir e-mail com o código”**. Se errar ou desistir, clique em **“Cancelar”** para começar de novo.
+
+### 🕘 Histórico de login
+
+Cada login feito com sucesso fica salvo no **localStorage deste navegador/dispositivo**. Na seção Minha conta aparece a lista com nome, e-mail, tipo de conta e data/hora do acesso — mais recente primeiro (até os 30 últimos). **Nunca** são guardadas senhas nem códigos.
+
+O botão **“Limpar histórico”** apaga só essa lista. O botão de limpar todos os dados também apaga o histórico. Se trocar de navegador, dispositivo ou apagar os dados do site, o histórico não vem junto.
 
 > ⚠️ Como o site é estático (GitHub Pages), ele **não envia e-mails sozinho**: o Gmail abre com a mensagem pronta e a pessoa clica em enviar. A idade é conferida pela data de nascimento informada — também não há verificação com documento. Tudo fica salvo somente neste navegador. Isso é uma separação simples para o projeto, não uma segurança de verdade.
 

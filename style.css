@@ -325,6 +325,12 @@ body.tema-escuro .status-3 { background: #44403c; color: #e7e5e4; }
 .senha-gerada .auth-dica { margin: 10px 0 0; }
 .senha-gerada .campo { display: block; margin-top: 12px; }
 a.botao-primario { display: inline-block; text-decoration: none; cursor: pointer; }
+.historico-login { grid-column: 1 / -1; border: 1px solid var(--borda); background: var(--campo); border-radius: 12px; padding: 14px; margin-top: 12px; }
+.historico-login h3 { margin: 0 0 6px; font-size: 1rem; }
+.lista-historico { display: grid; gap: 8px; margin: 10px 0 12px; max-height: 220px; overflow-y: auto; }
+.item-historico { display: flex; flex-direction: column; gap: 2px; border-bottom: 1px dashed var(--borda); padding-bottom: 8px; }
+.item-historico:last-child { border-bottom: 0; padding-bottom: 0; }
+.item-historico small { color: var(--muted); }
 
 .admin-conteudo { padding-top: 10px; }
 .admin-conteudo h3 { margin: 8px 0 4px; font-size: 1.05rem; }

@@ -83,6 +83,7 @@ flowchart TD
     CODIGOOK -->|"Não"| ERROCODIGO["⚠️ Aviso:<br/>código incorreto"]
     ERROCODIGO --> CODIGO
     CODIGOOK -->|"Sim"| SESSAO["Salva a sessão<br/>no navegador"]
+    SESSAO --> HISTORICO["Registra no histórico<br/>do dispositivo, sem senha nem código"]
 
     ENTRADA -->|"Criar conta"| TIPO{"Cliente ou administrador?"}
     TIPO -->|"Cliente"| CRIARCLI["Nome, turma, e-mail e senha numérica<br/>conta criada e já logada"]
@@ -93,7 +94,7 @@ flowchart TD
     IDADE -->|"Sim"| GERARSENHA["Gera senha de 6 dígitos,<br/>abre o Gmail e não mostra<br/>a senha no site"]
     GERARSENHA --> LOGIN
 
-    SESSAO --> TIPOSESSAO{"Tipo da conta"}
+    HISTORICO --> TIPOSESSAO{"Tipo da conta"}
     TIPOSESSAO -->|"Cliente"| CLIENTELOGADO["🧑‍🎓 Faz pedidos<br/>não vê gerenciamento"]
     TIPOSESSAO -->|"Administrador"| ADMIN["⚙️ Área do administrador<br/>aparece no site"]
     CLIENTELOGADO --> MENU
