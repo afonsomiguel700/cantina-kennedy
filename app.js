@@ -13,6 +13,7 @@ const CHAVES = {
   cardapioEditados: 'cantina.cardapio.editados',
   cardapioExcluidos: 'cantina.cardapio.excluidos',
   cardapioEstoque: 'cantina.cardapio.estoque',
+  contas: 'cantina.contas',
   sessao: 'cantina.sessao',
   carrinho: 'cantina.carrinho',
   pedidos: 'cantina.pedidos',
@@ -21,7 +22,6 @@ const CHAVES = {
 };
 
 // Chaves usadas por versões antigas do app (apagadas ao limpar os dados).
-// 'cantina.usuarios' vinha do login com cadastro livre, que não existe mais.
 const CHAVES_ANTIGAS = ['cantina.cardapio', 'cantina.cardapio.v2', 'cantina.usuarios'];
 
 // Cardápio inicial (usado na primeira vez que o site é aberto)
@@ -40,10 +40,6 @@ const CARDAPIO_PADRAO = [
 ];
 
 const STATUS = ['Recebido', 'Preparando', 'Pronto', 'Entregue'];
-
-// Senha única do administrador. Só quem souber esta senha abre a área de gerenciamento.
-// Atenção: em um site sem servidor, a senha fica visível no código-fonte.
-const SENHA_ADMIN = '1234';
 
 // Atalho para buscar elementos do HTML
 const $ = (seletor) => document.querySelector(seletor);
@@ -76,11 +72,31 @@ const el = {
   btnSalvarItem: $('#btn-salvar-item'),
   btnCancelarEdicao: $('#btn-cancelar-edicao'),
   listaCustom: $('#lista-custom'),
-  formAuth: $('#form-auth'),
-  authSenha: $('#auth-senha'),
+  authAbas: $('#auth-abas'),
+  abaLogin: $('#aba-login'),
+  abaCriar: $('#aba-criar'),
+  formLogin: $('#form-login'),
+  formCriar: $('#form-criar'),
+  loginEmail: $('#login-email'),
+  loginSenha: $('#login-senha'),
+  criarNome: $('#criar-nome'),
+  criarTurma: $('#criar-turma'),
+  criarEmail: $('#criar-email'),
+  criarNascimento: $('#criar-nascimento'),
+  criarMaior: $('#criar-maior'),
+  criarSenha: $('#criar-senha'),
+  campoTurma: $('#campo-turma'),
+  camposAdmin: $('#campos-admin'),
+  campoSenhaCriar: $('#campo-senha-criar'),
+  senhaGerada: $('#senha-gerada'),
+  senhaCodigo: $('#senha-codigo'),
+  linkGmail: $('#link-gmail'),
+  btnCopiarSenha: $('#btn-copiar-senha'),
   authLogado: $('#auth-logado'),
   nomeLogado: $('#nome-logado'),
+  tipoLogado: $('#tipo-logado'),
   btnSair: $('#btn-sair'),
+  secaoAdmin: $('#admin'),
   adminConteudo: $('#admin-conteudo'),
   btnLimpar: $('#btn-limpar'),
   toast: $('#toast')
@@ -118,6 +134,59 @@ function escapar(texto) {
 // Mostra o preço no formato brasileiro: R$ 4,50
 function dinheiro(valor) {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
+}
+
+// Hash simples para não guardar a senha em texto puro no navegador.
+// Atenção: isto não é segurança de verdade — serve só para o projeto local.
+function hashSenha(senha) {
+  let hash = 5381;
+  for (let i = 0; i < senha.length; i += 1) {
+    hash = ((hash << 5) + hash + senha.charCodeAt(i)) | 0;
+  }
+  return String(hash);
+}
+
+function emailValido(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function tipoSelecionado(nomeDoGrupo) {
+  const marcado = document.querySelector(`input[name="${nomeDoGrupo}"]:checked`);
+  return marcado ? marcado.value : 'cliente';
+}
+
+// Calcula a idade completa a partir da data de nascimento (aaaa-mm-dd).
+function idadeEmAnos(dataNascimento) {
+  const nascimento = new Date(`${dataNascimento}T00:00:00`);
+  if (!dataNascimento || Number.isNaN(nascimento.getTime())) return -1;
+  const hoje = new Date();
+  let idade = hoje.getFullYear() - nascimento.getFullYear();
+  const diferencaMeses = hoje.getMonth() - nascimento.getMonth();
+  if (diferencaMeses < 0 || (diferencaMeses === 0 && hoje.getDate() < nascimento.getDate())) {
+    idade -= 1;
+  }
+  return idade;
+}
+
+// Gera uma senha de administrador com somente números (6 dígitos).
+function gerarSenha() {
+  const valores = new Uint32Array(6);
+  if (window.crypto && window.crypto.getRandomValues) {
+    window.crypto.getRandomValues(valores);
+  } else {
+    for (let i = 0; i < valores.length; i += 1) valores[i] = Math.floor(Math.random() * 10);
+  }
+  return Array.from(valores, (valor) => String(valor % 10)).join('');
+}
+
+// Monta o link do Gmail com o e-mail já preenchido para a pessoa enviar para si mesma.
+function linkGmail(email, nome, senha) {
+  const assunto = 'Sua senha de administrador - Cantina do Kennedy';
+  const corpo = `Olá, ${nome}!\n\nSua senha de administrador da Cantina do Kennedy é:\n\n${senha}\n\nGuarde esta senha para entrar no site.\n`;
+  return 'https://mail.google.com/mail/?view=cm&fs=1'
+    + `&to=${encodeURIComponent(email)}`
+    + `&su=${encodeURIComponent(assunto)}`
+    + `&body=${encodeURIComponent(corpo)}`;
 }
 
 let timerToast;
@@ -164,38 +233,165 @@ function darBaixaNoEstoque(itens) {
   recarregarCardapio();
 }
 
-// ---------- Acesso do administrador (senha única) ----------
+// ---------- Contas: cliente e administrador ----------
+
+function alternarModo(modo) {
+  const criando = modo === 'criar';
+  modoAuth = modo;
+  el.formLogin.hidden = criando;
+  el.formCriar.hidden = !criando;
+  el.abaLogin.classList.toggle('ativa', !criando);
+  el.abaCriar.classList.toggle('ativa', criando);
+  el.abaLogin.setAttribute('aria-selected', String(!criando));
+  el.abaCriar.setAttribute('aria-selected', String(criando));
+  if (criando) el.senhaGerada.hidden = true;
+}
+
+function atualizarCamposCriacao() {
+  const admin = tipoSelecionado('tipo-criar') === 'admin';
+  el.camposAdmin.hidden = !admin;
+  el.campoTurma.hidden = admin;
+  el.campoSenhaCriar.hidden = admin;
+  el.criarNascimento.required = admin;
+  el.criarTurma.required = !admin;
+  el.criarSenha.required = !admin;
+}
 
 function renderizarAdmin() {
-  const logado = sessao === 'admin';
-  el.formAuth.hidden = logado;
+  const logado = Boolean(sessao);
+  const admin = logado && sessao.tipo === 'admin';
+
+  el.authAbas.hidden = logado;
+  el.formLogin.hidden = logado || modoAuth !== 'login';
+  el.formCriar.hidden = logado || modoAuth !== 'criar';
   el.authLogado.hidden = !logado;
-  el.adminConteudo.hidden = !logado;
-  if (logado) el.nomeLogado.textContent = 'Administrador';
+  el.secaoAdmin.hidden = !admin;
+  el.adminConteudo.hidden = !admin;
+
+  if (logado) {
+    el.nomeLogado.textContent = sessao.nome;
+    el.tipoLogado.textContent = admin ? '(administrador)' : '(cliente)';
+  }
+}
+
+function criarConta(evento) {
+  evento.preventDefault();
+
+  const tipo = tipoSelecionado('tipo-criar');
+  const nome = el.criarNome.value.trim();
+  const email = el.criarEmail.value.trim().toLowerCase();
+
+  if (!nome || !emailValido(email)) {
+    mostrarMensagem('Informe seu nome e um e-mail válidos.');
+    return;
+  }
+  if (contas.some((conta) => conta.email === email)) {
+    mostrarMensagem('Já existe uma conta com esse e-mail. Vá em “Entrar”.');
+    return;
+  }
+
+  const conta = { tipo, nome, email, turma: '' };
+  let senha;
+
+  if (tipo === 'admin') {
+    const idade = idadeEmAnos(el.criarNascimento.value);
+    if (idade < 0) {
+      mostrarMensagem('Informe uma data de nascimento válida.');
+      return;
+    }
+    if (idade < 18) {
+      mostrarMensagem('Você precisa ter mais de 18 anos para criar uma conta de administrador.');
+      return;
+    }
+    if (!el.criarMaior.checked) {
+      mostrarMensagem('Confirme que você tem mais de 18 anos.');
+      return;
+    }
+    senha = gerarSenha();
+    const url = linkGmail(email, nome, senha);
+    el.senhaCodigo.textContent = senha;
+    el.linkGmail.href = url;
+    el.senhaGerada.hidden = false;
+    window.open(url, '_blank', 'noopener');
+  } else {
+    senha = el.criarSenha.value;
+    if (!/^\d{4,}$/.test(senha)) {
+      mostrarMensagem('Crie uma senha usando somente números (pelo menos 4 dígitos).');
+      return;
+    }
+    conta.turma = el.criarTurma.value.trim();
+  }
+
+  conta.senha = hashSenha(senha);
+  contas.push(conta);
+  salvar(CHAVES.contas, contas);
+
+  el.formCriar.reset();
+  atualizarCamposCriacao();
+
+  if (tipo === 'cliente') {
+    alternarModo('login');
+    sessao = { tipo: 'cliente', nome, email };
+    salvar(CHAVES.sessao, sessao);
+    cliente = { nome, turma: conta.turma };
+    salvar(CHAVES.cliente, cliente);
+    el.nome.value = nome;
+    el.turma.value = conta.turma;
+    mostrarMensagem('Conta de cliente criada! Você já está logado.');
+  } else {
+    el.loginEmail.value = email;
+    el.loginSenha.value = '';
+    const opcaoAdmin = document.querySelector('input[name="tipo-login"][value="admin"]');
+    if (opcaoAdmin) opcaoAdmin.checked = true;
+    alternarModo('login');
+    el.loginSenha.focus();
+    mostrarMensagem('Conta criada! Envie o e-mail pelo Gmail e entre com a senha gerada.');
+  }
+
+  renderizarTudo();
 }
 
 function entrar(evento) {
   evento.preventDefault();
 
-  if (el.authSenha.value !== SENHA_ADMIN) {
-    mostrarMensagem('Senha incorreta.');
-    el.authSenha.value = '';
-    el.authSenha.focus();
+  const tipo = tipoSelecionado('tipo-login');
+  const email = el.loginEmail.value.trim().toLowerCase();
+  const senha = el.loginSenha.value;
+  const conta = contas.find((item) =>
+    item.email === email && item.tipo === tipo && item.senha === hashSenha(senha));
+
+  if (!conta) {
+    mostrarMensagem(tipo === 'admin'
+      ? 'E-mail ou senha de administrador incorretos.'
+      : 'E-mail ou senha incorretos.');
     return;
   }
 
-  sessao = 'admin';
+  sessao = { tipo: conta.tipo, nome: conta.nome, email: conta.email };
   salvar(CHAVES.sessao, sessao);
-  el.authSenha.value = '';
+
+  if (tipo === 'cliente') {
+    cliente = { nome: conta.nome, turma: conta.turma || '' };
+    salvar(CHAVES.cliente, cliente);
+    el.nome.value = cliente.nome;
+    el.turma.value = cliente.turma;
+  }
+
+  el.loginSenha.value = '';
+  el.senhaGerada.hidden = true;
   renderizarTudo();
-  mostrarMensagem('Acesso liberado! Você está como administrador.');
+  mostrarMensagem(`Bem-vindo(a), ${conta.nome}!`);
 }
 
 function sair() {
   sessao = null;
   salvar(CHAVES.sessao, sessao);
+  alternarModo('login');
+  el.loginEmail.value = '';
+  el.loginSenha.value = '';
+  el.senhaGerada.hidden = true;
   renderizarTudo();
-  mostrarMensagem('Você saiu do modo administrador.');
+  mostrarMensagem('Você saiu da conta.');
 }
 
 // ---------- Tema claro / escuro ----------
@@ -212,8 +408,11 @@ let cardapioCustom = ler(CHAVES.cardapioCustom, []);
 let cardapioEditados = ler(CHAVES.cardapioEditados, {});
 let cardapioExcluidos = ler(CHAVES.cardapioExcluidos, []);
 let cardapioEstoque = ler(CHAVES.cardapioEstoque, {});
-// Só aceita a sessão criada com a senha correta. Sessões antigas (de contas) não valem mais.
-let sessao = ler(CHAVES.sessao, null) === 'admin' ? 'admin' : null;
+let contas = ler(CHAVES.contas, []);
+let modoAuth = 'login';
+// Só aceita sessões no formato novo (cliente ou administrador).
+let sessao = ler(CHAVES.sessao, null);
+if (!sessao || !['cliente', 'admin'].includes(sessao.tipo) || !sessao.email) sessao = null;
 let editandoId = null;
 let carrinho = ler(CHAVES.carrinho, {}); // objeto: { "id-do-item": quantidade }
 let pedidos = ler(CHAVES.pedidos, []);
@@ -487,7 +686,7 @@ function resetarFormItem() {
 }
 
 function renderizarListaAdmin() {
-  if (!sessao) return;
+  if (!sessao || sessao.tipo !== 'admin') return;
 
   el.listaCustom.className = 'lista-admin';
 
@@ -680,9 +879,31 @@ document.addEventListener('keydown', (evento) => {
 
 el.formPedido.addEventListener('submit', finalizarPedido);
 el.formItem.addEventListener('submit', salvarItemAdmin);
-el.formAuth.addEventListener('submit', entrar);
+el.formLogin.addEventListener('submit', entrar);
+el.formCriar.addEventListener('submit', criarConta);
+el.abaLogin.addEventListener('click', () => alternarModo('login'));
+el.abaCriar.addEventListener('click', () => alternarModo('criar'));
 el.btnSair.addEventListener('click', sair);
 el.btnCancelarEdicao.addEventListener('click', resetarFormItem);
+
+document.querySelectorAll('input[name="tipo-criar"]').forEach((radio) => {
+  radio.addEventListener('change', atualizarCamposCriacao);
+});
+
+el.btnCopiarSenha.addEventListener('click', async () => {
+  const senha = el.senhaCodigo.textContent;
+  try {
+    await navigator.clipboard.writeText(senha);
+    mostrarMensagem('Senha copiada!');
+  } catch (erro) {
+    const intervalo = document.createRange();
+    intervalo.selectNodeContents(el.senhaCodigo);
+    const selecao = window.getSelection();
+    selecao.removeAllRanges();
+    selecao.addRange(intervalo);
+    mostrarMensagem('Senha selecionada. Copie com Ctrl + C.');
+  }
+});
 
 // Lembra nome e turma enquanto a pessoa digita.
 [el.nome, el.turma].forEach((campo) => campo.addEventListener('input', () => {
@@ -691,13 +912,14 @@ el.btnCancelarEdicao.addEventListener('click', resetarFormItem);
 }));
 
 el.btnLimpar.addEventListener('click', () => {
-  if (!confirm('Apagar produtos criados, alterações, estoque, carrinho e todos os pedidos salvos?')) return;
+  if (!confirm('Apagar contas, produtos criados, alterações, estoque, carrinho e todos os pedidos salvos?')) return;
 
   [...Object.values(CHAVES), ...CHAVES_ANTIGAS].forEach((chave) => localStorage.removeItem(chave));
   cardapioCustom = [];
   cardapioEditados = {};
   cardapioExcluidos = [];
   cardapioEstoque = {};
+  contas = [];
   sessao = null;
   carrinho = {};
   pedidos = [];
@@ -706,7 +928,11 @@ el.btnLimpar.addEventListener('click', () => {
   filtroAtual = 'Todos';
   el.nome.value = '';
   el.turma.value = '';
-  el.authSenha.value = '';
+  el.formLogin.reset();
+  el.formCriar.reset();
+  el.senhaGerada.hidden = true;
+  atualizarCamposCriacao();
+  alternarModo('login');
   resetarFormItem();
   recarregarCardapio();
   aplicarTema();
@@ -716,6 +942,8 @@ el.btnLimpar.addEventListener('click', () => {
 
 // ---------- Início ----------
 if (sessao === null) localStorage.removeItem(CHAVES.sessao);
+if (!Array.isArray(contas)) contas = [];
+atualizarCamposCriacao();
 el.nome.value = cliente.nome || '';
 el.turma.value = cliente.turma || '';
 aplicarTema();

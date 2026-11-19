@@ -1,6 +1,6 @@
 # Fluxograma simples — Cantina do Kennedy
 
-Versão resumida: o caminho principal do site em 7 passos, incluindo login, estoque e gerenciamento de produtos.
+Versão resumida: o caminho principal do site em 7 passos, incluindo contas de cliente e administrador, estoque e gerenciamento de produtos.
 
 ![Fluxograma simples](fluxograma-simples.png)
 
@@ -22,9 +22,11 @@ flowchart LR
 
     A --> B --> C --> D --> E --> F --> G --> H
 
-    B -.-> I["🔐 Administrador"]
-    I -.-> J["Digitar senha única"]
-    J -.-> K["Cadastrar, editar,<br/>excluir e ajustar estoque"]
+    B -.-> I["🧑‍🎓 Cliente"]
+    I -.-> J["Criar conta ou entrar<br/>e fazer pedidos"]
+    B -.-> L["🛡️ Administrador"]
+    L -.-> M["Conta com Gmail<br/>e mais de 18 anos"]
+    M -.-> K["Cadastrar, editar,<br/>excluir e ajustar estoque"]
 
     classDef inicio fill:#166534,stroke:#14532d,color:#ffffff;
     classDef acao fill:#fef3c7,stroke:#b45309,color:#78350f;
@@ -33,5 +35,5 @@ flowchart LR
     class A,H inicio;
     class B,C,D,E,G acao;
     class F salvo;
-    class I,J,K extra;
+    class I,J,L,M,K extra;
 ```

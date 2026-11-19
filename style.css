@@ -293,6 +293,33 @@ body.tema-escuro .status-3 { background: #44403c; color: #e7e5e4; }
 .auth-dica { margin: 0 0 6px; color: var(--muted); font-size: 0.85rem; }
 .auth-botoes, .admin-form-botoes { grid-column: 1 / -1; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
 .auth-logado { display: flex; justify-content: space-between; align-items: center; gap: 12px; background: var(--chip-fundo); border: 1px solid var(--borda); border-radius: 12px; padding: 10px 14px; }
+.auth-logado small { color: var(--muted); font-weight: 700; }
+
+/* Abas Entrar / Criar conta */
+.auth-abas { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+.auth-aba { border: 1px solid var(--borda); background: var(--cartao); color: var(--acento-texto); padding: 9px 16px; border-radius: 999px; font-weight: 800; }
+.auth-aba.ativa { background: var(--laranja); border-color: var(--laranja); color: #fff; }
+
+/* Escolha do tipo de conta */
+.tipo-conta { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; }
+.opcao-conta { display: flex; align-items: flex-start; gap: 10px; border: 1px solid var(--borda); background: var(--campo); border-radius: 12px; padding: 12px; font-weight: 700; cursor: pointer; }
+.opcao-conta:has(input:checked) { border-color: var(--laranja); background: var(--chip-fundo); }
+.opcao-conta input { margin-top: 3px; accent-color: var(--laranja); }
+.opcao-conta span { display: flex; flex-direction: column; gap: 2px; }
+.opcao-conta small { color: var(--muted); font-weight: 600; }
+.campos-admin { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; border: 1px dashed var(--borda); border-radius: 12px; padding: 12px; }
+.campos-admin .auth-dica { grid-column: 1 / -1; }
+.checkbox-linha { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.9rem; }
+.checkbox-linha input { accent-color: var(--laranja); }
+
+/* Senha gerada para o administrador */
+.senha-gerada { grid-column: 1 / -1; border: 1px solid var(--laranja); background: var(--chip-fundo); border-radius: 12px; padding: 14px; margin-top: 12px; }
+.senha-gerada h3 { margin: 0 0 6px; font-size: 1rem; }
+.senha-gerada p { margin: 0 0 10px; font-size: 0.85rem; color: var(--muted); }
+.senha-gerada .auth-dica { margin: 10px 0 0; }
+.senha-codigo { display: inline-block; background: var(--campo); border: 1px dashed var(--borda); border-radius: 10px; padding: 10px 14px; margin-bottom: 12px; font-family: monospace; font-size: 1.2rem; font-weight: 800; letter-spacing: 0.12em; user-select: all; }
+a.botao-primario { display: inline-block; text-decoration: none; cursor: pointer; }
+
 .admin-conteudo { padding-top: 10px; }
 .admin-conteudo h3 { margin: 8px 0 4px; font-size: 1.05rem; }
 .lista-admin { display: grid; gap: 8px; padding: 4px 0 16px; }

@@ -71,21 +71,38 @@ flowchart TD
     PESSOAS --> CARDPESSOA["Mostra para cada pessoa:<br/>pedidos, total gasto e último pedido"]
     CARDPESSOA --> MENU
 
-    MENU -->|"Gerenciar produtos"| LOGIN{"Administrador está logado?"}
-    LOGIN -->|"Não"| DIGITARSENHA["Digitar senha única<br/>do administrador"]
-    DIGITARSENHA --> LOGIN
-    LOGIN -->|"Sim"| ADMIN["⚙️ Área do administrador"]
+    MENU -->|"Minha conta"| ENTRADA{"Entrar ou criar conta?"}
+
+    ENTRADA -->|"Entrar"| LOGIN["Escolhe cliente ou administrador<br/>informa e-mail e senha numérica"]
+    LOGIN --> LOGINOK{"Dados corretos?"}
+    LOGINOK -->|"Não"| ERROLOGIN["⚠️ Aviso:<br/>e-mail ou senha incorretos"]
+    ERROLOGIN --> ENTRADA
+    LOGINOK -->|"Sim"| SESSAO["Salva a sessão<br/>no navegador"]
+
+    ENTRADA -->|"Criar conta"| TIPO{"Cliente ou administrador?"}
+    TIPO -->|"Cliente"| CRIARCLI["Nome, turma, e-mail e senha numérica<br/>conta criada e já logada"]
+    CRIARCLI --> SESSAO
+    TIPO -->|"Administrador"| IDADE{"Mais de 18 anos<br/>e declarou?"}
+    IDADE -->|"Não"| ERROIDADE["⚠️ Aviso:<br/>é preciso ter mais de 18 anos"]
+    ERROIDADE --> ENTRADA
+    IDADE -->|"Sim"| GERARSENHA["Gera senha de 6 dígitos<br/>e abre o Gmail com e-mail pronto"]
+    GERARSENHA --> LOGIN
+
+    SESSAO --> TIPOSESSAO{"Tipo da conta"}
+    TIPOSESSAO -->|"Cliente"| CLIENTELOGADO["🧑‍🎓 Faz pedidos<br/>não vê gerenciamento"]
+    TIPOSESSAO -->|"Administrador"| ADMIN["⚙️ Área do administrador<br/>aparece no site"]
+    CLIENTELOGADO --> MENU
     ADMIN --> NOVO["Cadastrar produto:<br/>nome, preço, categoria,<br/>emoji e estoque"]
     ADMIN --> EDITAR["Editar produto:<br/>preço, categoria e estoque"]
     ADMIN --> REMOVE["Excluir produto<br/>pede confirmação"]
     ADMIN --> LIMPAR["Limpar todos os dados<br/>pede confirmação"]
-    ADMIN --> SAIR["Sair do modo administrador"]
+    ADMIN --> SAIR["Sair da conta"]
     NOVO --> SALVACUSTOM["Salva no navegador<br/>produto aparece no cardápio"]
     EDITAR --> SALVACUSTOM
     REMOVE --> SALVACUSTOM
     SALVACUSTOM --> MENU
     LIMPAR --> MENU
-    SAIR --> LOGIN
+    SAIR --> ENTRADA
 
     MENU -->|"Botão 🌙 / ☀️"| TROCATEMA["Troca tema claro/escuro<br/>e salva a escolha"]
     TROCATEMA --> MENU

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cantina do Kennedy | Peça seu lanche</title>
-  <link rel="stylesheet" href="style.css?v=4">
+  <link rel="stylesheet" href="style.css?v=5">
 </head>
 <body>
 
@@ -72,29 +72,112 @@
       <div class="lista-pessoas" id="lista-pessoas"></div>
     </section>
 
-    <!-- Área para o responsável pela cantina -->
-    <section class="secao" id="admin">
-      <details class="admin">
-        <summary>⚙️ Gerenciar produtos (responsáveis pela cantina)</summary>
+    <!-- Área de login: cliente ou administrador -->
+    <section class="secao" id="conta">
+      <div class="secao-cabecalho">
+        <div>
+          <h2>Minha conta</h2>
+          <p class="secao-sub">Entre para fazer pedidos ou, se você for o responsável, para gerenciar a cantina.</p>
+        </div>
+      </div>
 
-        <div class="auth-area">
-          <form class="form-auth" id="form-auth">
-            <h3>🔐 Acesso do administrador</h3>
-            <p class="auth-dica" id="auth-dica">Digite a senha do administrador para cadastrar, editar e excluir produtos.</p>
-            <label class="campo">Senha do administrador
-              <input id="auth-senha" type="password" placeholder="Digite a senha" autocomplete="current-password" required>
-            </label>
-            <div class="auth-botoes">
-              <button class="botao-primario" id="btn-entrar" type="submit">Entrar</button>
-            </div>
-          </form>
-          <div class="auth-logado" id="auth-logado" hidden>
-            <span>✅ Logado como <strong id="nome-logado"></strong></span>
-            <button class="botao-texto" id="btn-sair" type="button">Sair</button>
-          </div>
+      <div class="auth-area">
+        <div class="auth-abas" id="auth-abas">
+          <button class="auth-aba ativa" id="aba-login" type="button" aria-selected="true">🔐 Entrar</button>
+          <button class="auth-aba" id="aba-criar" type="button" aria-selected="false">✨ Criar conta</button>
         </div>
 
-        <div class="admin-conteudo" id="admin-conteudo" hidden>
+        <!-- ENTRAR -->
+        <form class="form-auth" id="form-login">
+          <h3>Entrar na sua conta</h3>
+          <p class="auth-dica">Escolha o tipo de conta e use o e-mail e a senha que você cadastrou.</p>
+          <div class="tipo-conta">
+            <label class="opcao-conta">
+              <input type="radio" name="tipo-login" value="cliente" checked>
+              <span>🧑‍🎓 Sou cliente <small>(fazer pedidos)</small></span>
+            </label>
+            <label class="opcao-conta">
+              <input type="radio" name="tipo-login" value="admin">
+              <span>🛡️ Sou administrador <small>(gerenciar produtos)</small></span>
+            </label>
+          </div>
+          <label class="campo">E-mail
+            <input id="login-email" type="email" placeholder="seuemail@gmail.com" autocomplete="username" required>
+          </label>
+          <label class="campo">Senha
+            <input id="login-senha" type="password" inputmode="numeric" placeholder="Digite sua senha" autocomplete="current-password" required>
+          </label>
+          <div class="auth-botoes">
+            <button class="botao-primario" id="btn-entrar" type="submit">Entrar</button>
+          </div>
+        </form>
+
+        <!-- CRIAR CONTA -->
+        <form class="form-auth" id="form-criar" hidden>
+          <h3>Criar sua conta</h3>
+          <p class="auth-dica">Escolha uma opção:</p>
+          <div class="tipo-conta">
+            <label class="opcao-conta">
+              <input type="radio" name="tipo-criar" value="cliente" checked>
+              <span>🧑‍🎓 Cliente <small>(só fazer pedidos)</small></span>
+            </label>
+            <label class="opcao-conta">
+              <input type="radio" name="tipo-criar" value="admin">
+              <span>🛡️ Administrador <small>(mais de 18 anos)</small></span>
+            </label>
+          </div>
+          <label class="campo">Nome completo
+            <input id="criar-nome" type="text" placeholder="Ex.: Maria Silva" required>
+          </label>
+          <label class="campo" id="campo-turma">Turma
+            <input id="criar-turma" type="text" placeholder="Ex.: 8º A">
+          </label>
+          <label class="campo">E-mail (Gmail)
+            <input id="criar-email" type="email" placeholder="seuemail@gmail.com" autocomplete="email" required>
+          </label>
+          <div class="campos-admin" id="campos-admin" hidden>
+            <label class="campo">Data de nascimento
+              <input id="criar-nascimento" type="date">
+            </label>
+            <label class="checkbox-linha">
+              <input id="criar-maior" type="checkbox">
+              <span>Declaro ter mais de 18 anos</span>
+            </label>
+            <p class="auth-dica">Ao criar, geraremos uma senha e abriremos o Gmail com o e-mail pronto para você enviar para si mesmo.</p>
+          </div>
+          <label class="campo" id="campo-senha-criar">Crie uma senha
+            <input id="criar-senha" type="password" inputmode="numeric" placeholder="Somente números (mín. 4)" autocomplete="new-password">
+          </label>
+          <div class="auth-botoes">
+            <button class="botao-primario" id="btn-criar" type="submit">Criar minha conta</button>
+          </div>
+        </form>
+
+        <!-- Senha gerada para o administrador -->
+        <div class="senha-gerada" id="senha-gerada" hidden>
+          <h3>📧 Sua senha de administrador</h3>
+          <p>Envie o e-mail que abriu no Gmail. Guarde também a senha abaixo:</p>
+          <div class="senha-codigo" id="senha-codigo"></div>
+          <div class="auth-botoes">
+            <a class="botao-primario" id="link-gmail" href="#" target="_blank" rel="noopener">Abrir Gmail com e-mail pronto</a>
+            <button class="botao-secundario" id="btn-copiar-senha" type="button">Copiar senha</button>
+          </div>
+          <p class="auth-dica">Depois, escolha “Sou administrador” acima e entre usando essa senha.</p>
+        </div>
+
+        <div class="auth-logado" id="auth-logado" hidden>
+          <span>✅ Logado como <strong id="nome-logado"></strong> <small id="tipo-logado"></small></span>
+          <button class="botao-texto" id="btn-sair" type="button">Sair</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Área do administrador (só aparece depois do login) -->
+    <section class="secao" id="admin" hidden>
+      <details class="admin" open>
+        <summary>⚙️ Gerenciar produtos (administrador)</summary>
+
+        <div class="admin-conteudo" id="admin-conteudo">
           <h3>Produtos e estoque</h3>
           <p class="secao-sub">Edite preço, categoria ou quantidade. Ao finalizar um pedido, o estoque baixa automaticamente.</p>
           <form class="form-item" id="form-item">
@@ -165,6 +248,6 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script src="app.js?v=4"></script>
+  <script src="app.js?v=5"></script>
 </body>
 </html>
