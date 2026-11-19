@@ -25,8 +25,8 @@ Na seção **Minha conta** você escolhe entre **Entrar** e **Criar conta**.
 
 ### 🛡️ Administrador
 - Precisa informar nome, e-mail, **data de nascimento** e declarar ter **mais de 18 anos**.
-- O site gera uma senha de **6 dígitos** (somente números) e abre o **Gmail** com uma mensagem pronta para a pessoa enviar para si mesma.
-- Depois é só entrar escolhendo **“Sou administrador”** e usando a senha gerada.
+- O site gera uma senha de **6 dígitos** (somente números) e abre o **Gmail** com uma mensagem pronta para a pessoa enviar para si mesma. A senha **não aparece no site**: ela vem somente dentro do e-mail.
+- Depois é só abrir o e-mail no Gmail, copiar a senha e entrar escolhendo **“Sou administrador”**.
 
 > ⚠️ Como o site é estático (GitHub Pages), ele **não envia e-mails sozinho**: o Gmail abre com a mensagem pronta e a pessoa clica em enviar. A idade é conferida pela data de nascimento informada — também não há verificação com documento. Tudo fica salvo somente neste navegador. Isso é uma separação simples para o projeto, não uma segurança de verdade.
 

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cantina do Kennedy | Peça seu lanche</title>
-  <link rel="stylesheet" href="style.css?v=5">
+  <link rel="stylesheet" href="style.css?v=6">
 </head>
 <body>
 
@@ -143,7 +143,7 @@
               <input id="criar-maior" type="checkbox">
               <span>Declaro ter mais de 18 anos</span>
             </label>
-            <p class="auth-dica">Ao criar, geraremos uma senha e abriremos o Gmail com o e-mail pronto para você enviar para si mesmo.</p>
+            <p class="auth-dica">Ao criar, geraremos uma senha e abriremos o Gmail com o e-mail pronto. A senha não aparece no site — ela vem só no e-mail.</p>
           </div>
           <label class="campo" id="campo-senha-criar">Crie uma senha
             <input id="criar-senha" type="password" inputmode="numeric" placeholder="Somente números (mín. 4)" autocomplete="new-password">
@@ -155,14 +155,12 @@
 
         <!-- Senha gerada para o administrador -->
         <div class="senha-gerada" id="senha-gerada" hidden>
-          <h3>📧 Sua senha de administrador</h3>
-          <p>Envie o e-mail que abriu no Gmail. Guarde também a senha abaixo:</p>
-          <div class="senha-codigo" id="senha-codigo"></div>
+          <h3>📧 Veja sua senha no Gmail</h3>
+          <p>Envie para si mesmo o e-mail que abriu. A senha vem dentro da mensagem e <strong>não aparece aqui no site</strong>.</p>
           <div class="auth-botoes">
-            <a class="botao-primario" id="link-gmail" href="#" target="_blank" rel="noopener">Abrir Gmail com e-mail pronto</a>
-            <button class="botao-secundario" id="btn-copiar-senha" type="button">Copiar senha</button>
+            <a class="botao-primario" id="link-gmail" href="#" target="_blank" rel="noopener">Reabrir e-mail no Gmail</a>
           </div>
-          <p class="auth-dica">Depois, escolha “Sou administrador” acima e entre usando essa senha.</p>
+          <p class="auth-dica">Depois, abra o e-mail no Gmail, copie a senha e escolha “Sou administrador” para entrar.</p>
         </div>
 
         <div class="auth-logado" id="auth-logado" hidden>
@@ -248,6 +246,6 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script src="app.js?v=5"></script>
+  <script src="app.js?v=6"></script>
 </body>
 </html>

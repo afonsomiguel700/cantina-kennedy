@@ -63,7 +63,7 @@ flowchart TD
     TIPO -->|"Administrador"| IDADE{"Mais de 18 anos<br/>e declarou?"}
     IDADE -->|"Não"| ERROIDADE["⚠️ Aviso:<br/>é preciso ter mais de 18 anos"]
     ERROIDADE --> ENTRADA
-    IDADE -->|"Sim"| GERARSENHA["Gera senha de 6 dígitos<br/>e abre o Gmail com e-mail pronto"]
+    IDADE -->|"Sim"| GERARSENHA["Gera senha de 6 dígitos,<br/>abre o Gmail e não mostra<br/>a senha no site"]
     GERARSENHA --> LOGIN
 
     SESSAO --> TIPOSESSAO{"Tipo da conta"}

@@ -89,9 +89,7 @@ const el = {
   camposAdmin: $('#campos-admin'),
   campoSenhaCriar: $('#campo-senha-criar'),
   senhaGerada: $('#senha-gerada'),
-  senhaCodigo: $('#senha-codigo'),
   linkGmail: $('#link-gmail'),
-  btnCopiarSenha: $('#btn-copiar-senha'),
   authLogado: $('#auth-logado'),
   nomeLogado: $('#nome-logado'),
   tipoLogado: $('#tipo-logado'),
@@ -308,11 +306,9 @@ function criarConta(evento) {
       return;
     }
     senha = gerarSenha();
-    const url = linkGmail(email, nome, senha);
-    el.senhaCodigo.textContent = senha;
-    el.linkGmail.href = url;
+    senhaPendente = { email, nome, senha };
     el.senhaGerada.hidden = false;
-    window.open(url, '_blank', 'noopener');
+    window.open(linkGmail(email, nome, senha), '_blank', 'noopener');
   } else {
     senha = el.criarSenha.value;
     if (!/^\d{4,}$/.test(senha)) {
@@ -379,6 +375,7 @@ function entrar(evento) {
 
   el.loginSenha.value = '';
   el.senhaGerada.hidden = true;
+  senhaPendente = null;
   renderizarTudo();
   mostrarMensagem(`Bem-vindo(a), ${conta.nome}!`);
 }
@@ -390,6 +387,7 @@ function sair() {
   el.loginEmail.value = '';
   el.loginSenha.value = '';
   el.senhaGerada.hidden = true;
+  senhaPendente = null;
   renderizarTudo();
   mostrarMensagem('Você saiu da conta.');
 }
@@ -409,6 +407,7 @@ let cardapioEditados = ler(CHAVES.cardapioEditados, {});
 let cardapioExcluidos = ler(CHAVES.cardapioExcluidos, []);
 let cardapioEstoque = ler(CHAVES.cardapioEstoque, {});
 let contas = ler(CHAVES.contas, []);
+let senhaPendente = null; // senha do admin só na memória, enquanto o e-mail não é enviado
 let modoAuth = 'login';
 // Só aceita sessões no formato novo (cliente ou administrador).
 let sessao = ler(CHAVES.sessao, null);
@@ -882,28 +881,30 @@ el.formItem.addEventListener('submit', salvarItemAdmin);
 el.formLogin.addEventListener('submit', entrar);
 el.formCriar.addEventListener('submit', criarConta);
 el.abaLogin.addEventListener('click', () => alternarModo('login'));
-el.abaCriar.addEventListener('click', () => alternarModo('criar'));
+el.abaCriar.addEventListener('click', () => {
+  senhaPendente = null;
+  alternarModo('criar');
+});
 el.btnSair.addEventListener('click', sair);
 el.btnCancelarEdicao.addEventListener('click', resetarFormItem);
+
+el.linkGmail.addEventListener('click', (evento) => {
+  evento.preventDefault();
+  if (!senhaPendente) {
+    mostrarMensagem('Abra o e-mail que chegou no seu Gmail para ver a senha.');
+    return;
+  }
+  window.open(
+    linkGmail(senhaPendente.email, senhaPendente.nome, senhaPendente.senha),
+    '_blank',
+    'noopener'
+  );
+});
 
 document.querySelectorAll('input[name="tipo-criar"]').forEach((radio) => {
   radio.addEventListener('change', atualizarCamposCriacao);
 });
 
-el.btnCopiarSenha.addEventListener('click', async () => {
-  const senha = el.senhaCodigo.textContent;
-  try {
-    await navigator.clipboard.writeText(senha);
-    mostrarMensagem('Senha copiada!');
-  } catch (erro) {
-    const intervalo = document.createRange();
-    intervalo.selectNodeContents(el.senhaCodigo);
-    const selecao = window.getSelection();
-    selecao.removeAllRanges();
-    selecao.addRange(intervalo);
-    mostrarMensagem('Senha selecionada. Copie com Ctrl + C.');
-  }
-});
 
 // Lembra nome e turma enquanto a pessoa digita.
 [el.nome, el.turma].forEach((campo) => campo.addEventListener('input', () => {
@@ -921,6 +922,7 @@ el.btnLimpar.addEventListener('click', () => {
   cardapioEstoque = {};
   contas = [];
   sessao = null;
+  senhaPendente = null;
   carrinho = {};
   pedidos = [];
   cliente = { nome: '', turma: '' };
