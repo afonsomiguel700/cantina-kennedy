@@ -317,6 +317,7 @@ body.tema-escuro .status-3 { background: #44403c; color: #e7e5e4; }
 .senha-gerada h3 { margin: 0 0 6px; font-size: 1rem; }
 .senha-gerada p { margin: 0 0 10px; font-size: 0.85rem; color: var(--muted); }
 .senha-gerada .auth-dica { margin: 10px 0 0; }
+.senha-gerada .campo { display: block; margin-top: 12px; }
 a.botao-primario { display: inline-block; text-decoration: none; cursor: pointer; }
 
 .admin-conteudo { padding-top: 10px; }

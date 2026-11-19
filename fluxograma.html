@@ -77,7 +77,12 @@ flowchart TD
     LOGIN --> LOGINOK{"Dados corretos?"}
     LOGINOK -->|"Não"| ERROLOGIN["⚠️ Aviso:<br/>e-mail ou senha incorretos"]
     ERROLOGIN --> ENTRADA
-    LOGINOK -->|"Sim"| SESSAO["Salva a sessão<br/>no navegador"]
+    LOGINOK -->|"Sim"| GERACODIGO["Gera código de 6 dígitos,<br/>abre o Gmail e não mostra<br/>o código no site"]
+    GERACODIGO --> CODIGO["Digita o código do e-mail<br/>e clica em Confirmar"]
+    CODIGO --> CODIGOOK{"Código correto?"}
+    CODIGOOK -->|"Não"| ERROCODIGO["⚠️ Aviso:<br/>código incorreto"]
+    ERROCODIGO --> CODIGO
+    CODIGOOK -->|"Sim"| SESSAO["Salva a sessão<br/>no navegador"]
 
     ENTRADA -->|"Criar conta"| TIPO{"Cliente ou administrador?"}
     TIPO -->|"Cliente"| CRIARCLI["Nome, turma, e-mail e senha numérica<br/>conta criada e já logada"]

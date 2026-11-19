@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cantina do Kennedy | Peça seu lanche</title>
-  <link rel="stylesheet" href="style.css?v=6">
+  <link rel="stylesheet" href="style.css?v=7">
 </head>
 <body>
 
@@ -90,7 +90,7 @@
         <!-- ENTRAR -->
         <form class="form-auth" id="form-login">
           <h3>Entrar na sua conta</h3>
-          <p class="auth-dica">Escolha o tipo de conta e use o e-mail e a senha que você cadastrou.</p>
+          <p class="auth-dica">Escolha o tipo de conta e use o e-mail e a senha que você cadastrou. Depois, confirme com o código que chega no Gmail.</p>
           <div class="tipo-conta">
             <label class="opcao-conta">
               <input type="radio" name="tipo-login" value="cliente" checked>
@@ -111,6 +111,20 @@
             <button class="botao-primario" id="btn-entrar" type="submit">Entrar</button>
           </div>
         </form>
+
+        <!-- Etapa extra do login: código enviado pelo Gmail -->
+        <div class="senha-gerada" id="codigo-login" hidden>
+          <h3>📧 Confirme com o código do Gmail</h3>
+          <p>Envie para si mesmo o e-mail que abriu. O código de 6 dígitos vem dentro da mensagem e <strong>não aparece aqui no site</strong>.</p>
+          <a class="botao-primario" id="link-codigo-gmail" href="#" target="_blank" rel="noopener">Reabrir e-mail com o código</a>
+          <label class="campo">Digite o código do e-mail
+            <input id="login-codigo" type="text" inputmode="numeric" maxlength="6" placeholder="Somente 6 dígitos" autocomplete="one-time-code">
+          </label>
+          <div class="auth-botoes">
+            <button class="botao-primario" id="btn-confirmar-codigo" type="button">Confirmar e entrar</button>
+            <button class="botao-secundario" id="btn-cancelar-codigo" type="button">Cancelar</button>
+          </div>
+        </div>
 
         <!-- CRIAR CONTA -->
         <form class="form-auth" id="form-criar" hidden>
@@ -246,6 +260,6 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script src="app.js?v=6"></script>
+  <script src="app.js?v=7"></script>
 </body>
 </html>

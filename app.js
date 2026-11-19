@@ -79,6 +79,11 @@ const el = {
   formCriar: $('#form-criar'),
   loginEmail: $('#login-email'),
   loginSenha: $('#login-senha'),
+  codigoLogin: $('#codigo-login'),
+  loginCodigo: $('#login-codigo'),
+  linkCodigoGmail: $('#link-codigo-gmail'),
+  btnConfirmarCodigo: $('#btn-confirmar-codigo'),
+  btnCancelarCodigo: $('#btn-cancelar-codigo'),
   criarNome: $('#criar-nome'),
   criarTurma: $('#criar-turma'),
   criarEmail: $('#criar-email'),
@@ -166,7 +171,7 @@ function idadeEmAnos(dataNascimento) {
   return idade;
 }
 
-// Gera uma senha de administrador com somente números (6 dígitos).
+// Gera uma senha ou um código de acesso com somente números (6 dígitos).
 function gerarSenha() {
   const valores = new Uint32Array(6);
   if (window.crypto && window.crypto.getRandomValues) {
@@ -181,6 +186,16 @@ function gerarSenha() {
 function linkGmail(email, nome, senha) {
   const assunto = 'Sua senha de administrador - Cantina do Kennedy';
   const corpo = `Olá, ${nome}!\n\nSua senha de administrador da Cantina do Kennedy é:\n\n${senha}\n\nGuarde esta senha para entrar no site.\n`;
+  return 'https://mail.google.com/mail/?view=cm&fs=1'
+    + `&to=${encodeURIComponent(email)}`
+    + `&su=${encodeURIComponent(assunto)}`
+    + `&body=${encodeURIComponent(corpo)}`;
+}
+
+// Monta o e-mail do Gmail com o código usado na segunda etapa do login.
+function linkGmailCodigo(email, nome, codigo) {
+  const assunto = 'Código para entrar - Cantina do Kennedy';
+  const corpo = `Olá, ${nome}!\n\nSeu código para entrar na Cantina do Kennedy é:\n\n${codigo}\n\nDigite este código no site depois da senha.\n`;
   return 'https://mail.google.com/mail/?view=cm&fs=1'
     + `&to=${encodeURIComponent(email)}`
     + `&su=${encodeURIComponent(assunto)}`
@@ -243,6 +258,9 @@ function alternarModo(modo) {
   el.abaLogin.setAttribute('aria-selected', String(!criando));
   el.abaCriar.setAttribute('aria-selected', String(criando));
   if (criando) el.senhaGerada.hidden = true;
+  el.codigoLogin.hidden = true;
+  el.loginCodigo.value = '';
+  codigoPendente = null;
 }
 
 function atualizarCamposCriacao() {
@@ -363,10 +381,32 @@ function entrar(evento) {
     return;
   }
 
+  // Senha correta: agora vem a etapa extra com o código enviado pelo Gmail.
+  const codigo = gerarSenha();
+  codigoPendente = { conta, codigo };
+  el.formLogin.hidden = true;
+  el.codigoLogin.hidden = false;
+  el.loginCodigo.value = '';
+  window.open(linkGmailCodigo(conta.email, conta.nome, codigo), '_blank', 'noopener');
+  mostrarMensagem('Código gerado! Envie o e-mail no Gmail, copie o código e confirme aqui.');
+  el.loginCodigo.focus();
+}
+
+function confirmarCodigo() {
+  if (!codigoPendente) {
+    mostrarMensagem('Digite e-mail e senha para receber um código.');
+    return;
+  }
+  if (el.loginCodigo.value.trim() !== codigoPendente.codigo) {
+    mostrarMensagem('Código incorreto. Confira o e-mail no Gmail e tente de novo.');
+    return;
+  }
+
+  const conta = codigoPendente.conta;
   sessao = { tipo: conta.tipo, nome: conta.nome, email: conta.email };
   salvar(CHAVES.sessao, sessao);
 
-  if (tipo === 'cliente') {
+  if (conta.tipo === 'cliente') {
     cliente = { nome: conta.nome, turma: conta.turma || '' };
     salvar(CHAVES.cliente, cliente);
     el.nome.value = cliente.nome;
@@ -374,10 +414,21 @@ function entrar(evento) {
   }
 
   el.loginSenha.value = '';
+  el.loginCodigo.value = '';
   el.senhaGerada.hidden = true;
+  el.codigoLogin.hidden = true;
   senhaPendente = null;
+  codigoPendente = null;
   renderizarTudo();
   mostrarMensagem(`Bem-vindo(a), ${conta.nome}!`);
+}
+
+function cancelarCodigo() {
+  codigoPendente = null;
+  el.loginCodigo.value = '';
+  el.codigoLogin.hidden = true;
+  el.formLogin.hidden = false;
+  mostrarMensagem('Login cancelado. Digite e-mail e senha para receber um novo código.');
 }
 
 function sair() {
@@ -386,8 +437,11 @@ function sair() {
   alternarModo('login');
   el.loginEmail.value = '';
   el.loginSenha.value = '';
+  el.loginCodigo.value = '';
   el.senhaGerada.hidden = true;
+  el.codigoLogin.hidden = true;
   senhaPendente = null;
+  codigoPendente = null;
   renderizarTudo();
   mostrarMensagem('Você saiu da conta.');
 }
@@ -408,6 +462,7 @@ let cardapioExcluidos = ler(CHAVES.cardapioExcluidos, []);
 let cardapioEstoque = ler(CHAVES.cardapioEstoque, {});
 let contas = ler(CHAVES.contas, []);
 let senhaPendente = null; // senha do admin só na memória, enquanto o e-mail não é enviado
+let codigoPendente = null; // código do login só na memória, nunca aparece no site
 let modoAuth = 'login';
 // Só aceita sessões no formato novo (cliente ou administrador).
 let sessao = ler(CHAVES.sessao, null);
@@ -887,6 +942,8 @@ el.abaCriar.addEventListener('click', () => {
 });
 el.btnSair.addEventListener('click', sair);
 el.btnCancelarEdicao.addEventListener('click', resetarFormItem);
+el.btnConfirmarCodigo.addEventListener('click', confirmarCodigo);
+el.btnCancelarCodigo.addEventListener('click', cancelarCodigo);
 
 el.linkGmail.addEventListener('click', (evento) => {
   evento.preventDefault();
@@ -896,6 +953,19 @@ el.linkGmail.addEventListener('click', (evento) => {
   }
   window.open(
     linkGmail(senhaPendente.email, senhaPendente.nome, senhaPendente.senha),
+    '_blank',
+    'noopener'
+  );
+});
+
+el.linkCodigoGmail.addEventListener('click', (evento) => {
+  evento.preventDefault();
+  if (!codigoPendente) {
+    mostrarMensagem('Digite e-mail e senha para receber um código.');
+    return;
+  }
+  window.open(
+    linkGmailCodigo(codigoPendente.conta.email, codigoPendente.conta.nome, codigoPendente.codigo),
     '_blank',
     'noopener'
   );
@@ -923,6 +993,7 @@ el.btnLimpar.addEventListener('click', () => {
   contas = [];
   sessao = null;
   senhaPendente = null;
+  codigoPendente = null;
   carrinho = {};
   pedidos = [];
   cliente = { nome: '', turma: '' };
@@ -932,7 +1003,9 @@ el.btnLimpar.addEventListener('click', () => {
   el.turma.value = '';
   el.formLogin.reset();
   el.formCriar.reset();
+  el.loginCodigo.value = '';
   el.senhaGerada.hidden = true;
+  el.codigoLogin.hidden = true;
   atualizarCamposCriacao();
   alternarModo('login');
   resetarFormItem();
