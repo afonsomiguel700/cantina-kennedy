@@ -71,7 +71,7 @@ flowchart TD
     PESSOAS --> CARDPESSOA["Mostra para cada pessoa:<br/>pedidos, total gasto e último pedido"]
     CARDPESSOA --> MENU
 
-    MENU -->|"Minha conta"| ENTRADA{"Entrar ou criar conta?"}
+    MENU -->|"Entrar / Criar conta no início<br/>ou pelo atalho do topo"| ENTRADA{"Entrar ou criar conta?"}
 
     ENTRADA -->|"Entrar"| LOGIN["Escolhe cliente ou administrador<br/>informa e-mail e senha numérica"]
     LOGIN --> LOGINOK{"Dados corretos?"}
@@ -101,7 +101,7 @@ flowchart TD
     ADMIN --> EDITAR["Editar produto:<br/>preço, categoria e estoque"]
     ADMIN --> REMOVE["Excluir produto<br/>pede confirmação"]
     ADMIN --> LIMPAR["Limpar todos os dados<br/>pede confirmação"]
-    ADMIN --> SAIR["Sair da conta"]
+    ADMIN --> SAIR["Sair da conta<br/>botão visível no topo"]
     NOVO --> SALVACUSTOM["Salva no navegador<br/>produto aparece no cardápio"]
     EDITAR --> SALVACUSTOM
     REMOVE --> SALVACUSTOM

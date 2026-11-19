@@ -16,7 +16,9 @@ Site para fazer pedidos de lanches da cantina.
 
 ## Como funcionam as contas
 
-Na seção **Minha conta** você escolhe entre **Entrar** e **Criar conta**.
+A seção **Minha conta** fica no **início da página**, logo após a apresentação, bem visível. Você também encontra o atalho **🔑 Entrar / Criar conta** no topo, ao lado de Cardápio, Meus pedidos e Pessoas. Lá você escolhe entre **Entrar** e **Criar conta**.
+
+Quando estiver logado, o topo mostra seu nome e um botão **Sair** fácil de encontrar — ele encerra a sessão de qualquer lugar do site.
 
 ### 🧑‍🎓 Cliente
 - Informa nome, turma, e-mail e senha (somente números, mínimo 4 dígitos).

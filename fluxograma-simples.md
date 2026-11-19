@@ -23,7 +23,7 @@ flowchart LR
     A --> B --> C --> D --> E --> F --> G --> H
 
     B -.-> I["🧑‍🎓 Cliente"]
-    I -.-> J["Criar conta ou entrar<br/>com senha + código do Gmail"]
+    I -.-> J["No início: entrar ou criar conta<br/>senha + código do Gmail"]
     B -.-> L["🛡️ Administrador"]
     L -.-> M["Senha só no Gmail<br/>e mais de 18 anos"]
     M -.-> K["Cadastrar, editar,<br/>excluir e ajustar estoque"]

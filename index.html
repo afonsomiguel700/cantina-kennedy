@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cantina do Kennedy | Peça seu lanche</title>
-  <link rel="stylesheet" href="style.css?v=7">
+  <link rel="stylesheet" href="style.css?v=8">
 </head>
 <body>
 
@@ -19,6 +19,8 @@
         <a href="#pedidos">Meus pedidos</a>
         <a href="#pessoas">Pessoas</a>
       </nav>
+      <a class="botao-topo-conta" id="nav-conta" href="#conta">🔑 Entrar / Criar conta</a>
+      <button class="botao-topo-sair" id="btn-sair-topo" type="button" hidden>Sair</button>
       <button class="botao-tema" id="alternar-tema" type="button" title="Mudar cor do fundo" aria-label="Mudar para o fundo escuro">🌙</button>
       <button class="botao-carrinho" id="abrir-carrinho" type="button">
         🛒 <span>Carrinho</span> <span class="badge" id="contador-carrinho">0</span>
@@ -34,50 +36,17 @@
         <h1>Peça seu lanche sem perder tempo na fila.</h1>
         <p>Escolha seus favoritos, monte o pedido e retire no balcão da cantina. Simples assim!</p>
         <a class="botao-primario hero-cta" href="#cardapio">Ver cardápio ↓</a>
+        <a class="botao-secundario hero-cta" href="#conta">🔑 Entrar ou criar conta →</a>
       </div>
       <div class="emoji" aria-hidden="true">🥪</div>
     </section>
 
-    <!-- Cardápio -->
-    <section class="secao" id="cardapio">
+    <!-- Área de login: cliente ou administrador (no início, bem visível) -->
+    <section class="secao conta-destaque" id="conta">
       <div class="secao-cabecalho">
         <div>
-          <h2>Cardápio</h2>
-          <p class="secao-sub">Clique em “Adicionar” para colocar no carrinho.</p>
-        </div>
-      </div>
-      <div class="filtros" id="filtros"></div>
-      <div class="grade-cardapio" id="grade-cardapio"></div>
-    </section>
-
-    <!-- Pedidos feitos -->
-    <section class="secao" id="pedidos">
-      <div class="secao-cabecalho">
-        <div>
-          <h2>Meus pedidos</h2>
-          <p class="secao-sub">Acompanhe o andamento dos seus pedidos.</p>
-        </div>
-      </div>
-      <div class="lista-pedidos" id="lista-pedidos"></div>
-    </section>
-
-    <!-- Pessoas que já fizeram pedidos -->
-    <section class="secao" id="pessoas">
-      <div class="secao-cabecalho">
-        <div>
-          <h2>Pessoas que já pediram</h2>
-          <p class="secao-sub" id="resumo-pessoas">Nenhuma pessoa ainda.</p>
-        </div>
-      </div>
-      <div class="lista-pessoas" id="lista-pessoas"></div>
-    </section>
-
-    <!-- Área de login: cliente ou administrador -->
-    <section class="secao" id="conta">
-      <div class="secao-cabecalho">
-        <div>
-          <h2>Minha conta</h2>
-          <p class="secao-sub">Entre para fazer pedidos ou, se você for o responsável, para gerenciar a cantina.</p>
+          <h2>Minha conta — comece por aqui</h2>
+          <p class="secao-sub">Entre ou crie sua conta para fazer pedidos. Se você é o responsável pela cantina, entre como administrador para gerenciar os produtos.</p>
         </div>
       </div>
 
@@ -184,6 +153,40 @@
       </div>
     </section>
 
+    <!-- Cardápio -->
+    <section class="secao" id="cardapio">
+      <div class="secao-cabecalho">
+        <div>
+          <h2>Cardápio</h2>
+          <p class="secao-sub">Clique em “Adicionar” para colocar no carrinho.</p>
+        </div>
+      </div>
+      <div class="filtros" id="filtros"></div>
+      <div class="grade-cardapio" id="grade-cardapio"></div>
+    </section>
+
+    <!-- Pedidos feitos -->
+    <section class="secao" id="pedidos">
+      <div class="secao-cabecalho">
+        <div>
+          <h2>Meus pedidos</h2>
+          <p class="secao-sub">Acompanhe o andamento dos seus pedidos.</p>
+        </div>
+      </div>
+      <div class="lista-pedidos" id="lista-pedidos"></div>
+    </section>
+
+    <!-- Pessoas que já fizeram pedidos -->
+    <section class="secao" id="pessoas">
+      <div class="secao-cabecalho">
+        <div>
+          <h2>Pessoas que já pediram</h2>
+          <p class="secao-sub" id="resumo-pessoas">Nenhuma pessoa ainda.</p>
+        </div>
+      </div>
+      <div class="lista-pessoas" id="lista-pessoas"></div>
+    </section>
+
     <!-- Área do administrador (só aparece depois do login) -->
     <section class="secao" id="admin" hidden>
       <details class="admin" open>
@@ -260,6 +263,6 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script src="app.js?v=7"></script>
+  <script src="app.js?v=8"></script>
 </body>
 </html>

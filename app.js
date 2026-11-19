@@ -72,6 +72,8 @@ const el = {
   btnSalvarItem: $('#btn-salvar-item'),
   btnCancelarEdicao: $('#btn-cancelar-edicao'),
   listaCustom: $('#lista-custom'),
+  navConta: $('#nav-conta'),
+  btnSairTopo: $('#btn-sair-topo'),
   authAbas: $('#auth-abas'),
   abaLogin: $('#aba-login'),
   abaCriar: $('#aba-criar'),
@@ -283,6 +285,9 @@ function renderizarAdmin() {
   el.authLogado.hidden = !logado;
   el.secaoAdmin.hidden = !admin;
   el.adminConteudo.hidden = !admin;
+
+  el.navConta.textContent = logado ? `👤 ${sessao.nome}` : '🔑 Entrar / Criar conta';
+  el.btnSairTopo.hidden = !logado;
 
   if (logado) {
     el.nomeLogado.textContent = sessao.nome;
@@ -941,6 +946,7 @@ el.abaCriar.addEventListener('click', () => {
   alternarModo('criar');
 });
 el.btnSair.addEventListener('click', sair);
+el.btnSairTopo.addEventListener('click', sair);
 el.btnCancelarEdicao.addEventListener('click', resetarFormItem);
 el.btnConfirmarCodigo.addEventListener('click', confirmarCodigo);
 el.btnCancelarCodigo.addEventListener('click', cancelarCodigo);
