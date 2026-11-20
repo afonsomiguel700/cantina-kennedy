@@ -45,11 +45,9 @@ const STATUS = ['Recebido', 'Preparando', 'Pronto', 'Entregue'];
 // Turmas disponíveis nos formulários (do 6º ano ao 1º ano).
 const TURMAS = [
   '6º A', '6º B', '6º C',
-  '5º A', '5º B', '5º C',
-  '4º A', '4º B', '4º C',
-  '3º A', '3º B', '3º C',
-  '2º A', '2º B', '2º C',
-  '1º A', '1º B', '1º C',
+  '7º A', '7º B', '7º C',
+  '8º A', '8º B', '8º C',
+  '9º A', '9º B', '9º C',
   '1º ADM', '1º DSB'
 ];
 
