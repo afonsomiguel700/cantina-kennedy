@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cantina do Kennedy | Peça seu lanche</title>
-  <link rel="stylesheet" href="style.css?v=11">
+  <link rel="stylesheet" href="style.css?v=12">
 </head>
 <body>
 
@@ -113,7 +113,9 @@
             <input id="criar-nome" type="text" placeholder="Ex.: Maria Silva" required>
           </label>
           <label class="campo" id="campo-turma">Turma
-            <input id="criar-turma" type="text" placeholder="Ex.: 8º A">
+            <select id="criar-turma" required>
+              <option value="">Escolha a turma</option>
+            </select>
           </label>
           <label class="campo">E-mail (Gmail)
             <input id="criar-email" type="email" placeholder="seuemail@gmail.com" autocomplete="email" required>
@@ -262,7 +264,9 @@
           <input id="nome-cliente" type="text" placeholder="Ex.: Maria Silva" required>
         </label>
         <label class="campo">Turma
-          <input id="turma-cliente" type="text" placeholder="Ex.: 8º A" required>
+          <select id="turma-cliente" required>
+            <option value="">Escolha a turma</option>
+          </select>
         </label>
       </div>
       <fieldset class="forma-pagamento">
@@ -287,6 +291,6 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script src="app.js?v=11"></script>
+  <script src="app.js?v=12"></script>
 </body>
 </html>

@@ -42,6 +42,17 @@ const CARDAPIO_PADRAO = [
 
 const STATUS = ['Recebido', 'Preparando', 'Pronto', 'Entregue'];
 
+// Turmas disponíveis nos formulários (do 6º ano ao 1º ano).
+const TURMAS = [
+  '6º A', '6º B', '6º C',
+  '5º A', '5º B', '5º C',
+  '4º A', '4º B', '4º C',
+  '3º A', '3º B', '3º C',
+  '2º A', '2º B', '2º C',
+  '1º A', '1º B', '1º C',
+  '1º ADM', '1º DSB'
+];
+
 // Atalho para buscar elementos do HTML
 const $ = (seletor) => document.querySelector(seletor);
 
@@ -110,6 +121,23 @@ const el = {
   btnLimpar: $('#btn-limpar'),
   toast: $('#toast')
 };
+
+// Preenche os dois seletores de turma com a mesma lista.
+// Valores antigos que não estejam na lista continuam aparecendo, para não perder dados.
+function preencherTurmas() {
+  const salvos = [cliente.turma, ...contas.map((conta) => conta.turma)]
+    .filter(Boolean)
+    .map(String);
+  const opcoes = [...new Set([...TURMAS, ...salvos])];
+
+  [el.turma, el.criarTurma].forEach((select) => {
+    if (!select) return;
+    const atual = select.value;
+    select.innerHTML = '<option value="">Escolha a turma</option>'
+      + opcoes.map((turma) => `<option value="${escapar(turma)}">${escapar(turma)}</option>`).join('');
+    if (atual) select.value = atual;
+  });
+}
 
 // ---------- Funções auxiliares ----------
 
@@ -1084,6 +1112,7 @@ el.btnLimpar.addEventListener('click', () => {
 if (sessao === null) localStorage.removeItem(CHAVES.sessao);
 if (!Array.isArray(contas)) contas = [];
 if (!Array.isArray(historicoLogin)) historicoLogin = [];
+preencherTurmas();
 atualizarCamposCriacao();
 el.nome.value = cliente.nome || '';
 el.turma.value = cliente.turma || '';
