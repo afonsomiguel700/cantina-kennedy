@@ -31,12 +31,15 @@ Quando estiver logado, o topo mostra seu nome e um botão **Sair** fácil de enc
 ### 🔒 Administrador (acesso reservado)
 - **Não existe mais cadastro de administrador** no site — o botão e a opção “Sou administrador” foram removidos.
 - Na área de login, clique no link discreto **“🔒 Acesso da cantina”** e digite a **senha reservada**.
-- A senha inicial é `Cantina@2026Kennedy!` e fica no topo do `app.js`, na constante `SENHA_ADMIN`. Troque essa linha quando quiser.
-- Para trocar, a nova senha precisa seguir as regras de senha forte: **mínimo de 12 caracteres, pelo menos 2 números, 1 letra maiúscula, 1 letra minúscula e 1 símbolo** (como `@ ! # $ % & *`). Se a senha configurada não seguir essas regras, o site bloqueia o acesso e avisa no console.
+- A senha **muda todo dia automaticamente**, usando a data do navegador no modelo **`Cantina@DDMMAAAA Kennedy!`**.
+  - Exemplo: em 20/11/2026 a senha é `Cantina@20112026Kennedy!`.
+  - A senha de ontem **não serve mais**: isso evita que uma senha copiada continue funcionando.
+- As partes fixas (`Cantina@` e `Kennedy!`) ficam no topo do `app.js` em `PREFIXO_SENHA_ADMIN` e `SUFIXO_SENHA_ADMIN`. Troque essas linhas quando quiser.
+- A senha gerada precisa seguir as regras de senha forte: **mínimo de 12 caracteres, pelo menos 2 números, 1 letra maiúscula, 1 letra minúscula e 1 símbolo**. Se as partes fixas não gerarem uma senha válida, o site bloqueia o acesso e avisa no console.
 - A senha é comparada exatamente como foi digitada — diferencia maiúsculas de minúsculas e símbolos.
 - Depois de entrar, a área de gerenciar produtos aparece normalmente. O acesso também aparece no histórico de login, mas **nunca** salva a senha.
 
-> ⚠️ A senha fica visível no código-fonte: serve para controlar o acesso no dia a dia, mas **não é segurança de verdade**. Em um site estático (GitHub Pages), qualquer pessoa que abrir o `app.js` consegue ler a senha. Para segurança real, seria preciso um servidor.
+> ⚠️ A troca diária ajuda contra senha copiada ou compartilhada, **mas não é segurança de verdade**: o modelo da senha está no código-fonte. Em um site estático (GitHub Pages), quem abrir o `app.js` consegue calcular a senha de qualquer dia. Para segurança real, seria preciso um servidor.
 
 ### 🔢 Etapa extra ao entrar (cliente)
 

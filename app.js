@@ -42,11 +42,13 @@ const CARDAPIO_PADRAO = [
 
 const STATUS = ['Recebido', 'Preparando', 'Pronto', 'Entregue'];
 
-// Senha do acesso reservado da cantina (troque quando quiser).
+// Partes fixas da senha reservada (troque quando quiser).
+// A senha completa muda todo dia e segue o modelo: Cantina@DDMMAAAA Kennedy!
+const PREFIXO_SENHA_ADMIN = 'Cantina@';
+const SUFIXO_SENHA_ADMIN = 'Kennedy!';
+
 // Regras exigidas: no mínimo 12 caracteres, 2 números, letra maiúscula,
 // letra minúscula e símbolo (ex.: @ ! # $ % & *).
-const SENHA_ADMIN = 'Cantina@2026Kennedy!';
-
 function senhaAdminValida(senha) {
   if (typeof senha !== 'string') return false;
   const quantidadeNumeros = (senha.match(/\d/g) || []).length;
@@ -56,6 +58,15 @@ function senhaAdminValida(senha) {
     && /[a-z]/.test(senha)
     && /\d/.test(senha)
     && /[^A-Za-z0-9]/.test(senha);
+}
+
+// Senha do dia, calculada com a data do navegador.
+// Exemplo: 20/11/2026 -> Cantina@20112026Kennedy!
+function senhaAdminDoDia(data = new Date()) {
+  const dia = String(data.getDate()).padStart(2, '0');
+  const mes = String(data.getMonth() + 1).padStart(2, '0');
+  const ano = String(data.getFullYear());
+  return PREFIXO_SENHA_ADMIN + dia + mes + ano + SUFIXO_SENHA_ADMIN;
 }
 
 // Linha usada só para separar o 9º ano do 1º ano na lista de turmas.
@@ -424,13 +435,15 @@ function entrar(evento) {
 function entrarAdmin(evento) {
   evento.preventDefault();
 
-  if (!senhaAdminValida(SENHA_ADMIN)) {
-    mostrarMensagem('A senha reservada no app.js precisa ter no mínimo 12 caracteres, 2 números, maiúscula, minúscula e símbolo.');
+  const senhaDeHoje = senhaAdminDoDia();
+
+  if (!senhaAdminValida(senhaDeHoje)) {
+    mostrarMensagem('A senha do dia precisa ter no mínimo 12 caracteres, 2 números, maiúscula, minúscula e símbolo. Ajuste o prefixo/sufixo no app.js.');
     return;
   }
 
-  if (el.adminSenha.value !== SENHA_ADMIN) {
-    mostrarMensagem('Senha da cantina incorreta.');
+  if (el.adminSenha.value !== senhaDeHoje) {
+    mostrarMensagem('Senha da cantina incorreta. Lembre-se: ela muda todo dia.');
     return;
   }
 
@@ -1072,8 +1085,8 @@ el.btnLimpar.addEventListener('click', () => {
 if (sessao === null) localStorage.removeItem(CHAVES.sessao);
 if (!Array.isArray(contas)) contas = [];
 if (!Array.isArray(historicoLogin)) historicoLogin = [];
-if (!senhaAdminValida(SENHA_ADMIN)) {
-  console.warn('SENHA_ADMIN não atende às regras de senha forte e o acesso ficará bloqueado.');
+if (!senhaAdminValida(senhaAdminDoDia())) {
+  console.warn('A senha do dia não atende às regras de senha forte e o acesso ficará bloqueado.');
 }
 preencherTurmas();
 alternarModo('login');

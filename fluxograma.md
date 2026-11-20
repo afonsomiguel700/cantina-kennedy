@@ -66,7 +66,7 @@ flowchart TD
     ENTRADA -->|"Criar conta"| CRIARCLI["Nome, turma da lista,<br/>e-mail e senha numérica<br/>conta criada e já logada"]
     CRIARCLI --> SESSAO
 
-    ENTRADA -.->|"Link discreto:<br/>Acesso da cantina"| SENHAADMIN["Digita a senha reservada<br/>(SENHA_ADMIN: 12+ caracteres,<br/>números e símbolo)"]
+    ENTRADA -.->|"Link discreto:<br/>Acesso da cantina"| SENHAADMIN["Digita a senha do dia<br/>(Cantina@DDMMAAAA<br/>Kennedy!)"]
     SENHAADMIN --> ADMINOK{"Senha correta?"}
     ADMINOK -->|"Não"| ERROADMIN["⚠️ Aviso:<br/>senha da cantina incorreta"]
     ERROADMIN --> ENTRADA
