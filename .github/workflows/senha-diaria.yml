@@ -1,0 +1,62 @@
+name: Senha do dia
+
+on:
+  schedule:
+    # 03:05 UTC = 00:05 no Brasil (UTC-3), sem horC�rio de verão.
+    - cron: '5 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  atualizar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Calcular senha e atualizar README
+        env:
+          TZ: America/Sao_Paulo
+        run: |
+          DIA=$(date +%d)
+          MES=$(date +%m)
+          ANO=$(date +%Y)
+          DATA="$DIA/$MES/$ANO"
+          SENHA="Cantina@${DIA}${MES}${ANO}Kennedy!"
+          export DATA SENHA
+          echo "Senha de $DATA: $SENHA"
+          python3 - <<'PY'
+          import os
+          import pathlib
+          import re
+
+          data = os.environ["DATA"]
+          senha = os.environ["SENHA"]
+          caminho = pathlib.Path("README.md")
+          texto = caminho.read_text(encoding="utf-8")
+
+          linha = f"🔑 **Senha do administrador de hoje ({data}):** `{senha}`"
+          padrao = r"🔑 \*\*Senha do administrador de hoje \([^)]*\):\*\* `[^`]+`"
+
+          if re.search(padrao, texto):
+              texto = re.sub(padrao, linha, texto, count=1)
+          else:
+              ancora = "🌐 **Site no ar:** https://afonsomiguel700.github.io/cantina-kennedy/\n"
+              texto = texto.replace(ancora, ancora + "\n" + linha + "\n", 1)
+
+          caminho.write_text(texto, encoding="utf-8")
+          PY
+
+      - name: Salvar alteração
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          if ! git diff --cached --quiet; then
+            git commit -m "Atualiza senha do dia no README"
+            git push
+          else
+            echo "README já estava atualizado."
+          fi
