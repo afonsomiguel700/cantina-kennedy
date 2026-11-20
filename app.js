@@ -42,12 +42,35 @@ const CARDAPIO_PADRAO = [
 
 const STATUS = ['Recebido', 'Preparando', 'Pronto', 'Entregue'];
 
-// Turmas disponíveis nos formulários (do 6º ano ao 1º ano).
+// Senha do acesso reservado da cantina (troque quando quiser).
+// Regras exigidas: no mínimo 12 caracteres, 2 números, letra maiúscula,
+// letra minúscula e símbolo (ex.: @ ! # $ % & *).
+const SENHA_ADMIN = 'Cantina@2026Kennedy!';
+
+function senhaAdminValida(senha) {
+  if (typeof senha !== 'string') return false;
+  const quantidadeNumeros = (senha.match(/\d/g) || []).length;
+  return senha.length >= 12
+    && quantidadeNumeros >= 2
+    && /[A-Z]/.test(senha)
+    && /[a-z]/.test(senha)
+    && /\d/.test(senha)
+    && /[^A-Za-z0-9]/.test(senha);
+}
+
+// Linha usada só para separar o 9º ano do 1º ano na lista de turmas.
+const SEPARADOR_TURMA = '──────────';
+
+// Turmas disponíveis nos formulários, com separador entre cada ano.
 const TURMAS = [
   '6º A', '6º B', '6º C',
+  SEPARADOR_TURMA,
   '7º A', '7º B', '7º C',
+  SEPARADOR_TURMA,
   '8º A', '8º B', '8º C',
+  SEPARADOR_TURMA,
   '9º A', '9º B', '9º C',
+  SEPARADOR_TURMA,
   '1º ADM', '1º DSB'
 ];
 
@@ -99,14 +122,13 @@ const el = {
   criarNome: $('#criar-nome'),
   criarTurma: $('#criar-turma'),
   criarEmail: $('#criar-email'),
-  criarNascimento: $('#criar-nascimento'),
-  criarMaior: $('#criar-maior'),
   criarSenha: $('#criar-senha'),
   campoTurma: $('#campo-turma'),
-  camposAdmin: $('#campos-admin'),
-  campoSenhaCriar: $('#campo-senha-criar'),
-  senhaGerada: $('#senha-gerada'),
-  linkGmail: $('#link-gmail'),
+  formAdmin: $('#form-admin'),
+  adminSenha: $('#admin-senha'),
+  btnEntrarAdmin: $('#btn-entrar-admin'),
+  btnVoltarLogin: $('#btn-voltar-login'),
+  btnMostrarAdmin: $('#mostrar-admin'),
   authLogado: $('#auth-logado'),
   historicoLogin: $('#historico-login'),
   listaHistorico: $('#lista-historico'),
@@ -126,13 +148,28 @@ function preencherTurmas() {
   const salvos = [cliente.turma, ...contas.map((conta) => conta.turma)]
     .filter(Boolean)
     .map(String);
-  const opcoes = [...new Set([...TURMAS, ...salvos])];
+
+  // Repete os separadores (um entre cada ano), mas evita turmas duplicadas.
+  const vistos = new Set();
+  const opcoes = [];
+  [...TURMAS, ...salvos].forEach((turma) => {
+    if (turma === SEPARADOR_TURMA) {
+      opcoes.push(turma);
+      return;
+    }
+    if (!vistos.has(turma)) {
+      vistos.add(turma);
+      opcoes.push(turma);
+    }
+  });
 
   [el.turma, el.criarTurma].forEach((select) => {
     if (!select) return;
     const atual = select.value;
     select.innerHTML = '<option value="">Escolha a turma</option>'
-      + opcoes.map((turma) => `<option value="${escapar(turma)}">${escapar(turma)}</option>`).join('');
+      + opcoes.map((turma) => turma === SEPARADOR_TURMA
+        ? `<option value="" disabled>${escapar(turma)}</option>`
+        : `<option value="${escapar(turma)}">${escapar(turma)}</option>`).join('');
     if (atual) select.value = atual;
   });
 }
@@ -185,24 +222,6 @@ function emailValido(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-function tipoSelecionado(nomeDoGrupo) {
-  const marcado = document.querySelector(`input[name="${nomeDoGrupo}"]:checked`);
-  return marcado ? marcado.value : 'cliente';
-}
-
-// Calcula a idade completa a partir da data de nascimento (aaaa-mm-dd).
-function idadeEmAnos(dataNascimento) {
-  const nascimento = new Date(`${dataNascimento}T00:00:00`);
-  if (!dataNascimento || Number.isNaN(nascimento.getTime())) return -1;
-  const hoje = new Date();
-  let idade = hoje.getFullYear() - nascimento.getFullYear();
-  const diferencaMeses = hoje.getMonth() - nascimento.getMonth();
-  if (diferencaMeses < 0 || (diferencaMeses === 0 && hoje.getDate() < nascimento.getDate())) {
-    idade -= 1;
-  }
-  return idade;
-}
-
 // Gera uma senha ou um código de acesso com somente números (6 dígitos).
 function gerarSenha() {
   const valores = new Uint32Array(6);
@@ -212,16 +231,6 @@ function gerarSenha() {
     for (let i = 0; i < valores.length; i += 1) valores[i] = Math.floor(Math.random() * 10);
   }
   return Array.from(valores, (valor) => String(valor % 10)).join('');
-}
-
-// Monta o link do Gmail com o e-mail já preenchido para a pessoa enviar para si mesma.
-function linkGmail(email, nome, senha) {
-  const assunto = 'Sua senha de administrador - Cantina do Kennedy';
-  const corpo = `Olá, ${nome}!\n\nSua senha de administrador da Cantina do Kennedy é:\n\n${senha}\n\nGuarde esta senha para entrar no site.\n`;
-  return 'https://mail.google.com/mail/?view=cm&fs=1'
-    + `&to=${encodeURIComponent(email)}`
-    + `&su=${encodeURIComponent(assunto)}`
-    + `&body=${encodeURIComponent(corpo)}`;
 }
 
 // Monta o e-mail do Gmail com o código usado na segunda etapa do login.
@@ -281,28 +290,17 @@ function darBaixaNoEstoque(itens) {
 // ---------- Contas: cliente e administrador ----------
 
 function alternarModo(modo) {
-  const criando = modo === 'criar';
   modoAuth = modo;
-  el.formLogin.hidden = criando;
-  el.formCriar.hidden = !criando;
-  el.abaLogin.classList.toggle('ativa', !criando);
-  el.abaCriar.classList.toggle('ativa', criando);
-  el.abaLogin.setAttribute('aria-selected', String(!criando));
-  el.abaCriar.setAttribute('aria-selected', String(criando));
-  if (criando) el.senhaGerada.hidden = true;
+  el.formLogin.hidden = modo !== 'login';
+  el.formCriar.hidden = modo !== 'criar';
+  el.formAdmin.hidden = modo !== 'admin';
+  el.abaLogin.classList.toggle('ativa', modo === 'login');
+  el.abaCriar.classList.toggle('ativa', modo === 'criar');
+  el.abaLogin.setAttribute('aria-selected', String(modo === 'login'));
+  el.abaCriar.setAttribute('aria-selected', String(modo === 'criar'));
   el.codigoLogin.hidden = true;
   el.loginCodigo.value = '';
   codigoPendente = null;
-}
-
-function atualizarCamposCriacao() {
-  const admin = tipoSelecionado('tipo-criar') === 'admin';
-  el.camposAdmin.hidden = !admin;
-  el.campoTurma.hidden = admin;
-  el.campoSenhaCriar.hidden = admin;
-  el.criarNascimento.required = admin;
-  el.criarTurma.required = !admin;
-  el.criarSenha.required = !admin;
 }
 
 function renderizarAdmin() {
@@ -312,6 +310,7 @@ function renderizarAdmin() {
   el.authAbas.hidden = logado;
   el.formLogin.hidden = logado || modoAuth !== 'login';
   el.formCriar.hidden = logado || modoAuth !== 'criar';
+  el.formAdmin.hidden = logado || modoAuth !== 'admin';
   el.authLogado.hidden = !logado;
   el.secaoAdmin.hidden = !admin;
   el.adminConteudo.hidden = !admin;
@@ -358,12 +357,21 @@ function renderizarHistorico() {
 function criarConta(evento) {
   evento.preventDefault();
 
-  const tipo = tipoSelecionado('tipo-criar');
   const nome = el.criarNome.value.trim();
   const email = el.criarEmail.value.trim().toLowerCase();
+  const turma = el.criarTurma.value.trim();
+  const senha = el.criarSenha.value;
 
   if (!nome || !emailValido(email)) {
     mostrarMensagem('Informe seu nome e um e-mail válidos.');
+    return;
+  }
+  if (!turma) {
+    mostrarMensagem('Escolha sua turma.');
+    return;
+  }
+  if (!/^\d{4,}$/.test(senha)) {
+    mostrarMensagem('Crie uma senha usando somente números (pelo menos 4 dígitos).');
     return;
   }
   if (contas.some((conta) => conta.email === email)) {
@@ -371,62 +379,20 @@ function criarConta(evento) {
     return;
   }
 
-  const conta = { tipo, nome, email, turma: '' };
-  let senha;
-
-  if (tipo === 'admin') {
-    const idade = idadeEmAnos(el.criarNascimento.value);
-    if (idade < 0) {
-      mostrarMensagem('Informe uma data de nascimento válida.');
-      return;
-    }
-    if (idade < 18) {
-      mostrarMensagem('Você precisa ter mais de 18 anos para criar uma conta de administrador.');
-      return;
-    }
-    if (!el.criarMaior.checked) {
-      mostrarMensagem('Confirme que você tem mais de 18 anos.');
-      return;
-    }
-    senha = gerarSenha();
-    senhaPendente = { email, nome, senha };
-    el.senhaGerada.hidden = false;
-    window.open(linkGmail(email, nome, senha), '_blank', 'noopener');
-  } else {
-    senha = el.criarSenha.value;
-    if (!/^\d{4,}$/.test(senha)) {
-      mostrarMensagem('Crie uma senha usando somente números (pelo menos 4 dígitos).');
-      return;
-    }
-    conta.turma = el.criarTurma.value.trim();
-  }
-
-  conta.senha = hashSenha(senha);
+  const conta = { tipo: 'cliente', nome, email, turma, senha: hashSenha(senha) };
   contas.push(conta);
   salvar(CHAVES.contas, contas);
 
   el.formCriar.reset();
-  atualizarCamposCriacao();
-
-  if (tipo === 'cliente') {
-    alternarModo('login');
-    sessao = { tipo: 'cliente', nome, email };
-    salvar(CHAVES.sessao, sessao);
-    registrarLogin(conta);
-    cliente = { nome, turma: conta.turma };
-    salvar(CHAVES.cliente, cliente);
-    el.nome.value = nome;
-    el.turma.value = conta.turma;
-    mostrarMensagem('Conta de cliente criada! Você já está logado.');
-  } else {
-    el.loginEmail.value = email;
-    el.loginSenha.value = '';
-    const opcaoAdmin = document.querySelector('input[name="tipo-login"][value="admin"]');
-    if (opcaoAdmin) opcaoAdmin.checked = true;
-    alternarModo('login');
-    el.loginSenha.focus();
-    mostrarMensagem('Conta criada! Envie o e-mail pelo Gmail e entre com a senha gerada.');
-  }
+  alternarModo('login');
+  sessao = { tipo: 'cliente', nome, email };
+  salvar(CHAVES.sessao, sessao);
+  registrarLogin(conta);
+  cliente = { nome, turma };
+  salvar(CHAVES.cliente, cliente);
+  el.nome.value = nome;
+  el.turma.value = turma;
+  mostrarMensagem('Conta de cliente criada! Você já está logado.');
 
   renderizarTudo();
 }
@@ -434,16 +400,13 @@ function criarConta(evento) {
 function entrar(evento) {
   evento.preventDefault();
 
-  const tipo = tipoSelecionado('tipo-login');
   const email = el.loginEmail.value.trim().toLowerCase();
   const senha = el.loginSenha.value;
   const conta = contas.find((item) =>
-    item.email === email && item.tipo === tipo && item.senha === hashSenha(senha));
+    item.tipo === 'cliente' && item.email === email && item.senha === hashSenha(senha));
 
   if (!conta) {
-    mostrarMensagem(tipo === 'admin'
-      ? 'E-mail ou senha de administrador incorretos.'
-      : 'E-mail ou senha incorretos.');
+    mostrarMensagem('E-mail ou senha incorretos.');
     return;
   }
 
@@ -456,6 +419,29 @@ function entrar(evento) {
   window.open(linkGmailCodigo(conta.email, conta.nome, codigo), '_blank', 'noopener');
   mostrarMensagem('Código gerado! Envie o e-mail no Gmail, copie o código e confirme aqui.');
   el.loginCodigo.focus();
+}
+
+function entrarAdmin(evento) {
+  evento.preventDefault();
+
+  if (!senhaAdminValida(SENHA_ADMIN)) {
+    mostrarMensagem('A senha reservada no app.js precisa ter no mínimo 12 caracteres, 2 números, maiúscula, minúscula e símbolo.');
+    return;
+  }
+
+  if (el.adminSenha.value !== SENHA_ADMIN) {
+    mostrarMensagem('Senha da cantina incorreta.');
+    return;
+  }
+
+  const conta = { tipo: 'admin', nome: 'Administrador', email: 'admin@cantina.local' };
+  sessao = { tipo: conta.tipo, nome: conta.nome, email: conta.email };
+  salvar(CHAVES.sessao, sessao);
+  registrarLogin(conta);
+
+  el.formAdmin.reset();
+  renderizarTudo();
+  mostrarMensagem('Você entrou como administrador.');
 }
 
 function confirmarCodigo() {
@@ -482,9 +468,7 @@ function confirmarCodigo() {
 
   el.loginSenha.value = '';
   el.loginCodigo.value = '';
-  el.senhaGerada.hidden = true;
   el.codigoLogin.hidden = true;
-  senhaPendente = null;
   codigoPendente = null;
   renderizarTudo();
   mostrarMensagem(`Bem-vindo(a), ${conta.nome}!`);
@@ -505,9 +489,8 @@ function sair() {
   el.loginEmail.value = '';
   el.loginSenha.value = '';
   el.loginCodigo.value = '';
-  el.senhaGerada.hidden = true;
+  el.adminSenha.value = '';
   el.codigoLogin.hidden = true;
-  senhaPendente = null;
   codigoPendente = null;
   renderizarTudo();
   mostrarMensagem('Você saiu da conta.');
@@ -529,7 +512,6 @@ let cardapioExcluidos = ler(CHAVES.cardapioExcluidos, []);
 let cardapioEstoque = ler(CHAVES.cardapioEstoque, {});
 let contas = ler(CHAVES.contas, []);
 let historicoLogin = ler(CHAVES.historicoLogin, []);
-let senhaPendente = null; // senha do admin só na memória, enquanto o e-mail não é enviado
 let codigoPendente = null; // código do login só na memória, nunca aparece no site
 let modoAuth = 'login';
 // Só aceita sessões no formato novo (cliente ou administrador).
@@ -1018,11 +1000,11 @@ el.formPedido.addEventListener('submit', finalizarPedido);
 el.formItem.addEventListener('submit', salvarItemAdmin);
 el.formLogin.addEventListener('submit', entrar);
 el.formCriar.addEventListener('submit', criarConta);
+el.formAdmin.addEventListener('submit', entrarAdmin);
+el.btnMostrarAdmin.addEventListener('click', () => alternarModo('admin'));
+el.btnVoltarLogin.addEventListener('click', () => alternarModo('login'));
 el.abaLogin.addEventListener('click', () => alternarModo('login'));
-el.abaCriar.addEventListener('click', () => {
-  senhaPendente = null;
-  alternarModo('criar');
-});
+el.abaCriar.addEventListener('click', () => alternarModo('criar'));
 el.btnSair.addEventListener('click', sair);
 el.btnSairTopo.addEventListener('click', sair);
 el.btnLimparHistorico.addEventListener('click', () => {
@@ -1036,19 +1018,6 @@ el.btnCancelarEdicao.addEventListener('click', resetarFormItem);
 el.btnConfirmarCodigo.addEventListener('click', confirmarCodigo);
 el.btnCancelarCodigo.addEventListener('click', cancelarCodigo);
 
-el.linkGmail.addEventListener('click', (evento) => {
-  evento.preventDefault();
-  if (!senhaPendente) {
-    mostrarMensagem('Abra o e-mail que chegou no seu Gmail para ver a senha.');
-    return;
-  }
-  window.open(
-    linkGmail(senhaPendente.email, senhaPendente.nome, senhaPendente.senha),
-    '_blank',
-    'noopener'
-  );
-});
-
 el.linkCodigoGmail.addEventListener('click', (evento) => {
   evento.preventDefault();
   if (!codigoPendente) {
@@ -1061,11 +1030,6 @@ el.linkCodigoGmail.addEventListener('click', (evento) => {
     'noopener'
   );
 });
-
-document.querySelectorAll('input[name="tipo-criar"]').forEach((radio) => {
-  radio.addEventListener('change', atualizarCamposCriacao);
-});
-
 
 // Lembra nome e turma enquanto a pessoa digita.
 [el.nome, el.turma].forEach((campo) => campo.addEventListener('input', () => {
@@ -1084,7 +1048,6 @@ el.btnLimpar.addEventListener('click', () => {
   contas = [];
   historicoLogin = [];
   sessao = null;
-  senhaPendente = null;
   codigoPendente = null;
   carrinho = {};
   pedidos = [];
@@ -1094,10 +1057,9 @@ el.btnLimpar.addEventListener('click', () => {
   el.formPedido.reset();
   el.formLogin.reset();
   el.formCriar.reset();
+  el.formAdmin.reset();
   el.loginCodigo.value = '';
-  el.senhaGerada.hidden = true;
   el.codigoLogin.hidden = true;
-  atualizarCamposCriacao();
   alternarModo('login');
   resetarFormItem();
   recarregarCardapio();
@@ -1110,8 +1072,11 @@ el.btnLimpar.addEventListener('click', () => {
 if (sessao === null) localStorage.removeItem(CHAVES.sessao);
 if (!Array.isArray(contas)) contas = [];
 if (!Array.isArray(historicoLogin)) historicoLogin = [];
+if (!senhaAdminValida(SENHA_ADMIN)) {
+  console.warn('SENHA_ADMIN não atende às regras de senha forte e o acesso ficará bloqueado.');
+}
 preencherTurmas();
-atualizarCamposCriacao();
+alternarModo('login');
 el.nome.value = cliente.nome || '';
 el.turma.value = cliente.turma || '';
 aplicarTema();

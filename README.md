@@ -12,7 +12,7 @@ Site para fazer pedidos de lanches da cantina.
 - Nome e turma do cliente e acompanhamento do status (Recebido → Preparando → Pronto → Entregue).
 - Lista de **pessoas que já pediram** (sem senha).
 - **Histórico de login** salvo no dispositivo (nome, e-mail, tipo e data/hora — sem senha nem código).
-- **Contas separadas**: cliente e administrador.
+- **Conta de cliente** para fazer pedidos e **acesso reservado** para o administrador.
 - Área do administrador com **CRUD de produtos**: cadastrar, editar, excluir e ajustar estoque.
 - Ao finalizar um pedido, o estoque dos produtos baixa automaticamente.
 
@@ -24,21 +24,29 @@ Quando estiver logado, o topo mostra seu nome e um botão **Sair** fácil de enc
 
 ### 🧑‍🎓 Cliente
 - Informa nome, turma, e-mail e senha (somente números, mínimo 4 dígitos).
+- A turma é escolhida em uma lista: `6º A/B/C`, separador, `7º A/B/C`, separador, `8º A/B/C`, separador, `9º A/B/C`, separador e depois `1º ADM` e `1º DSB`.
 - Serve somente para fazer pedidos e acompanhar o status.
 - Não consegue mexer nos produtos.
 
-### 🛡️ Administrador
-- Precisa informar nome, e-mail, **data de nascimento** e declarar ter **mais de 18 anos**.
-- O site gera uma senha de **6 dígitos** (somente números) e abre o **Gmail** com uma mensagem pronta para a pessoa enviar para si mesma. A senha **não aparece no site**: ela vem somente dentro do e-mail.
-- Depois é só abrir o e-mail no Gmail, copiar a senha e entrar escolhendo **“Sou administrador”**.
+### 🔒 Administrador (acesso reservado)
+- **Não existe mais cadastro de administrador** no site — o botão e a opção “Sou administrador” foram removidos.
+- Na área de login, clique no link discreto **“🔒 Acesso da cantina”** e digite a **senha reservada**.
+- A senha inicial é `Cantina@2026Kennedy!` e fica no topo do `app.js`, na constante `SENHA_ADMIN`. Troque essa linha quando quiser.
+- Para trocar, a nova senha precisa seguir as regras de senha forte: **mínimo de 12 caracteres, pelo menos 2 números, 1 letra maiúscula, 1 letra minúscula e 1 símbolo** (como `@ ! # $ % & *`). Se a senha configurada não seguir essas regras, o site bloqueia o acesso e avisa no console.
+- A senha é comparada exatamente como foi digitada — diferencia maiúsculas de minúsculas e símbolos.
+- Depois de entrar, a área de gerenciar produtos aparece normalmente. O acesso também aparece no histórico de login, mas **nunca** salva a senha.
 
-### 🔢 Etapa extra ao entrar
+> ⚠️ A senha fica visível no código-fonte: serve para controlar o acesso no dia a dia, mas **não é segurança de verdade**. Em um site estático (GitHub Pages), qualquer pessoa que abrir o `app.js` consegue ler a senha. Para segurança real, seria preciso um servidor.
 
-Tanto cliente quanto administrador, ao escolher **Entrar**, precisam:
+### 🔢 Etapa extra ao entrar (cliente)
 
-1. Informar o tipo de conta, o e-mail e a senha cadastrada.
-2. Receber um **código de 6 dígitos** no Gmail (o site abre a mensagem pronta).
-3. Copiar o código do e-mail, digitá-lo no site e clicar em **“Confirmar e entrar”**.
+Ao escolher **Entrar** com uma conta de cliente:
+
+1. Informe o e-mail e a senha cadastrados.
+2. Receba um **código de 6 dígitos** no Gmail (o site abre a mensagem pronta).
+3. Copie o código do e-mail, digite-o no site e clique em **“Confirmar e entrar”**.
+
+O acesso reservado do administrador **não** usa essa etapa do Gmail.
 
 O código **não aparece no site**: fica só dentro do e-mail e na memória da aba. Se o e-mail não abriu, use **“Reabrir e-mail com o código”**. Se errar ou desistir, clique em **“Cancelar”** para começar de novo.
 
@@ -48,7 +56,7 @@ Cada login feito com sucesso fica salvo no **localStorage deste navegador/dispos
 
 O botão **“Limpar histórico”** apaga só essa lista. O botão de limpar todos os dados também apaga o histórico. Se trocar de navegador, dispositivo ou apagar os dados do site, o histórico não vem junto.
 
-> ⚠️ Como o site é estático (GitHub Pages), ele **não envia e-mails sozinho**: o Gmail abre com a mensagem pronta e a pessoa clica em enviar. A idade é conferida pela data de nascimento informada — também não há verificação com documento. Tudo fica salvo somente neste navegador. Isso é uma separação simples para o projeto, não uma segurança de verdade.
+> ⚠️ Como o site é estático (GitHub Pages), ele **não envia e-mails sozinho**: o Gmail abre com a mensagem pronta e a pessoa clica em enviar. Tudo fica salvo somente neste navegador. Isso é uma separação simples para o projeto, não uma segurança de verdade.
 
 ## 💳 Forma de pagamento
 

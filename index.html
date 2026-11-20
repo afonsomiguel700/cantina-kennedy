@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cantina do Kennedy | Peça seu lanche</title>
-  <link rel="stylesheet" href="style.css?v=13">
+  <link rel="stylesheet" href="style.css?v=16">
 </head>
 <body>
 
@@ -46,7 +46,7 @@
       <div class="secao-cabecalho">
         <div>
           <h2>Minha conta — comece por aqui</h2>
-          <p class="secao-sub">Entre ou crie sua conta para fazer pedidos. Se você é o responsável pela cantina, entre como administrador para gerenciar os produtos.</p>
+          <p class="secao-sub">Entre ou crie sua conta para fazer pedidos.</p>
         </div>
       </div>
 
@@ -59,17 +59,7 @@
         <!-- ENTRAR -->
         <form class="form-auth" id="form-login">
           <h3>Entrar na sua conta</h3>
-          <p class="auth-dica">Escolha o tipo de conta e use o e-mail e a senha que você cadastrou. Depois, confirme com o código que chega no Gmail.</p>
-          <div class="tipo-conta">
-            <label class="opcao-conta">
-              <input type="radio" name="tipo-login" value="cliente" checked>
-              <span>🧑‍🎓 Sou cliente <small>(fazer pedidos)</small></span>
-            </label>
-            <label class="opcao-conta">
-              <input type="radio" name="tipo-login" value="admin">
-              <span>🛡️ Sou administrador <small>(gerenciar produtos)</small></span>
-            </label>
-          </div>
+          <p class="auth-dica">Use o e-mail e a senha que você cadastrou. Depois, confirme com o código que chega no Gmail.</p>
           <label class="campo">E-mail
             <input id="login-email" type="email" placeholder="seuemail@gmail.com" autocomplete="username" required>
           </label>
@@ -78,6 +68,20 @@
           </label>
           <div class="auth-botoes">
             <button class="botao-primario" id="btn-entrar" type="submit">Entrar</button>
+            <button class="botao-texto admin-revelar" id="mostrar-admin" type="button">🔒 Acesso da cantina</button>
+          </div>
+        </form>
+
+        <!-- Acesso reservado da cantina (senha secreta) -->
+        <form class="form-auth" id="form-admin" hidden>
+          <h3>🔒 Acesso da cantina</h3>
+          <p class="auth-dica">Área reservada. Digite a senha forte da cantina (mínimo 12 caracteres, números, letras e símbolo).</p>
+          <label class="campo">Senha da cantina
+            <input id="admin-senha" type="password" placeholder="Senha reservada" autocomplete="current-password" required>
+          </label>
+          <div class="auth-botoes">
+            <button class="botao-primario" id="btn-entrar-admin" type="submit">Entrar como administrador</button>
+            <button class="botao-secundario" id="btn-voltar-login" type="button">Voltar</button>
           </div>
         </form>
 
@@ -98,17 +102,7 @@
         <!-- CRIAR CONTA -->
         <form class="form-auth" id="form-criar" hidden>
           <h3>Criar sua conta</h3>
-          <p class="auth-dica">Escolha uma opção:</p>
-          <div class="tipo-conta">
-            <label class="opcao-conta">
-              <input type="radio" name="tipo-criar" value="cliente" checked>
-              <span>🧑‍🎓 Cliente <small>(só fazer pedidos)</small></span>
-            </label>
-            <label class="opcao-conta">
-              <input type="radio" name="tipo-criar" value="admin">
-              <span>🛡️ Administrador <small>(mais de 18 anos)</small></span>
-            </label>
-          </div>
+          <p class="auth-dica">Preencha seus dados para criar uma conta de cliente.</p>
           <label class="campo">Nome completo
             <input id="criar-nome" type="text" placeholder="Ex.: Maria Silva" required>
           </label>
@@ -120,33 +114,13 @@
           <label class="campo">E-mail (Gmail)
             <input id="criar-email" type="email" placeholder="seuemail@gmail.com" autocomplete="email" required>
           </label>
-          <div class="campos-admin" id="campos-admin" hidden>
-            <label class="campo">Data de nascimento
-              <input id="criar-nascimento" type="date">
-            </label>
-            <label class="checkbox-linha">
-              <input id="criar-maior" type="checkbox">
-              <span>Declaro ter mais de 18 anos</span>
-            </label>
-            <p class="auth-dica">Ao criar, geraremos uma senha e abriremos o Gmail com o e-mail pronto. A senha não aparece no site — ela vem só no e-mail.</p>
-          </div>
           <label class="campo" id="campo-senha-criar">Crie uma senha
-            <input id="criar-senha" type="password" inputmode="numeric" placeholder="Somente números (mín. 4)" autocomplete="new-password">
+            <input id="criar-senha" type="password" inputmode="numeric" placeholder="Somente números (mín. 4)" autocomplete="new-password" required>
           </label>
           <div class="auth-botoes">
             <button class="botao-primario" id="btn-criar" type="submit">Criar minha conta</button>
           </div>
         </form>
-
-        <!-- Senha gerada para o administrador -->
-        <div class="senha-gerada" id="senha-gerada" hidden>
-          <h3>📧 Veja sua senha no Gmail</h3>
-          <p>Envie para si mesmo o e-mail que abriu. A senha vem dentro da mensagem e <strong>não aparece aqui no site</strong>.</p>
-          <div class="auth-botoes">
-            <a class="botao-primario" id="link-gmail" href="#" target="_blank" rel="noopener">Reabrir e-mail no Gmail</a>
-          </div>
-          <p class="auth-dica">Depois, abra o e-mail no Gmail, copie a senha e escolha “Sou administrador” para entrar.</p>
-        </div>
 
         <div class="auth-logado" id="auth-logado" hidden>
           <span>✅ Logado como <strong id="nome-logado"></strong> <small id="tipo-logado"></small></span>
@@ -291,6 +265,6 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script src="app.js?v=13"></script>
+  <script src="app.js?v=16"></script>
 </body>
 </html>

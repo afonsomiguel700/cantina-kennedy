@@ -302,6 +302,7 @@ body.tema-escuro .status-3 { background: #44403c; color: #e7e5e4; }
 .auth-botoes, .admin-form-botoes { grid-column: 1 / -1; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
 .auth-logado { display: flex; justify-content: space-between; align-items: center; gap: 12px; background: var(--chip-fundo); border: 1px solid var(--borda); border-radius: 12px; padding: 10px 14px; }
 .auth-logado small { color: var(--muted); font-weight: 700; }
+.admin-revelar { font-size: 0.78rem; color: var(--muted); text-decoration: underline; }
 
 /* Abas Entrar / Criar conta */
 .auth-abas { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
