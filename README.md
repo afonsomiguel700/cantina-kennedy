@@ -15,7 +15,7 @@ Site para fazer pedidos de lanches da cantina.
 - **Forma de pagamento** na finalização: cartão de débito, cartão de crédito ou dinheiro.
 - Nome e turma do cliente e acompanhamento do status (Recebido → Preparando → Pronto → Entregue).
 - Lista de **pessoas que já pediram** (sem senha).
-- **Histórico de login** salvo no dispositivo (nome, e-mail, tipo e data/hora — sem senha nem código).
+- **Histórico de login** salvo no dispositivo (nome, e-mail, tipo e data/hora — sem senha).
 - **Conta de cliente** para fazer pedidos e **acesso reservado** para o administrador.
 - Área do administrador com **CRUD de produtos**: cadastrar, editar, excluir e ajustar estoque.
 - Ao finalizar um pedido, o estoque dos produtos baixa automaticamente.
@@ -39,31 +39,25 @@ Quando estiver logado, o topo mostra seu nome e um botão **Sair** fácil de enc
   - Exemplo: em 20/11/2026 a senha é `Cantina@20112026Kennedy!`.
   - A senha de ontem **não serve mais**: isso evita que uma senha copiada continue funcionando.
 - As partes fixas (`Cantina@` e `Kennedy!`) ficam no topo do `app.js` em `PREFIXO_SENHA_ADMIN` e `SUFIXO_SENHA_ADMIN`. Troque essas linhas quando quiser.
-- A senha gerada precisa seguir as regras de senha forte: **mínimo de 12 caracteres, pelo menos 2 números, 1 letra maiúscula, 1 letra minúscula e 1 símbolo**. Se as partes fixas não gerarem uma senha válida, o site bloqueia o acesso e avisa no console.
+- A senha gerada precisa seguir as regras de senha forte: **mínimo de 8 caracteres, pelo menos 2 números, 1 letra maiúscula, 1 letra minúscula e 1 símbolo**. Se as partes fixas não gerarem uma senha válida, o site bloqueia o acesso e avisa no console.
 - A senha é comparada exatamente como foi digitada — diferencia maiúsculas de minúsculas e símbolos.
 - Depois de entrar, a área de gerenciar produtos aparece normalmente. O acesso também aparece no histórico de login, mas **nunca** salva a senha.
 
 > ⚠️ A troca diária ajuda contra senha copiada ou compartilhada, **mas não é segurança de verdade**: o modelo da senha está no código-fonte. Em um site estático (GitHub Pages), quem abrir o `app.js` consegue calcular a senha de qualquer dia. Para segurança real, seria preciso um servidor.
 
-### 🔢 Etapa extra ao entrar (cliente)
+### 🔐 Entrar na conta de cliente
 
-Ao escolher **Entrar** com uma conta de cliente:
+Ao escolher **Entrar**, informe o **e-mail** e a **senha numérica** cadastrados e clique em **“Entrar”**. Você entra direto na conta de cliente — **não há mais código de 6 dígitos nem etapa com Gmail**.
 
-1. Informe o e-mail e a senha cadastrados.
-2. Receba um **código de 6 dígitos** no Gmail (o site abre a mensagem pronta).
-3. Copie o código do e-mail, digite-o no site e clique em **“Confirmar e entrar”**.
-
-O acesso reservado do administrador **não** usa essa etapa do Gmail.
-
-O código **não aparece no site**: fica só dentro do e-mail e na memória da aba. Se o e-mail não abriu, use **“Reabrir e-mail com o código”**. Se errar ou desistir, clique em **“Cancelar”** para começar de novo.
+O acesso reservado do administrador continua usando apenas a senha do dia.
 
 ### 🕘 Histórico de login
 
-Cada login feito com sucesso fica salvo no **localStorage deste navegador/dispositivo**. Na seção Minha conta aparece a lista com nome, e-mail, tipo de conta e data/hora do acesso — mais recente primeiro (até os 30 últimos). **Nunca** são guardadas senhas nem códigos.
+Cada login feito com sucesso fica salvo no **localStorage deste navegador/dispositivo**. Na seção Minha conta aparece a lista com nome, e-mail, tipo de conta e data/hora do acesso — mais recente primeiro (até os 30 últimos). **Nunca** é guardada a senha.
 
 O botão **“Limpar histórico”** apaga só essa lista. O botão de limpar todos os dados também apaga o histórico. Se trocar de navegador, dispositivo ou apagar os dados do site, o histórico não vem junto.
 
-> ⚠️ Como o site é estático (GitHub Pages), ele **não envia e-mails sozinho**: o Gmail abre com a mensagem pronta e a pessoa clica em enviar. Tudo fica salvo somente neste navegador. Isso é uma separação simples para o projeto, não uma segurança de verdade.
+> ⚠️ Como o site é estático (GitHub Pages), tudo fica salvo somente neste navegador. Não há envio de e-mails nem verificação em duas etapas — o login é feito só com e-mail e senha numérica.
 
 ## 💳 Forma de pagamento
 

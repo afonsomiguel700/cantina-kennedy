@@ -47,12 +47,12 @@ const STATUS = ['Recebido', 'Preparando', 'Pronto', 'Entregue'];
 const PREFIXO_SENHA_ADMIN = 'Cantina@';
 const SUFIXO_SENHA_ADMIN = 'Kennedy!';
 
-// Regras exigidas: no mínimo 12 caracteres, 2 números, letra maiúscula,
+// Regras exigidas: no mínimo 8 caracteres, 2 números, letra maiúscula,
 // letra minúscula e símbolo (ex.: @ ! # $ % & *).
 function senhaAdminValida(senha) {
   if (typeof senha !== 'string') return false;
   const quantidadeNumeros = (senha.match(/\d/g) || []).length;
-  return senha.length >= 12
+  return senha.length >= 8
     && quantidadeNumeros >= 2
     && /[A-Z]/.test(senha)
     && /[a-z]/.test(senha)
@@ -125,11 +125,6 @@ const el = {
   formCriar: $('#form-criar'),
   loginEmail: $('#login-email'),
   loginSenha: $('#login-senha'),
-  codigoLogin: $('#codigo-login'),
-  loginCodigo: $('#login-codigo'),
-  linkCodigoGmail: $('#link-codigo-gmail'),
-  btnConfirmarCodigo: $('#btn-confirmar-codigo'),
-  btnCancelarCodigo: $('#btn-cancelar-codigo'),
   criarNome: $('#criar-nome'),
   criarTurma: $('#criar-turma'),
   criarEmail: $('#criar-email'),
@@ -233,27 +228,6 @@ function emailValido(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-// Gera uma senha ou um código de acesso com somente números (6 dígitos).
-function gerarSenha() {
-  const valores = new Uint32Array(6);
-  if (window.crypto && window.crypto.getRandomValues) {
-    window.crypto.getRandomValues(valores);
-  } else {
-    for (let i = 0; i < valores.length; i += 1) valores[i] = Math.floor(Math.random() * 10);
-  }
-  return Array.from(valores, (valor) => String(valor % 10)).join('');
-}
-
-// Monta o e-mail do Gmail com o código usado na segunda etapa do login.
-function linkGmailCodigo(email, nome, codigo) {
-  const assunto = 'Código para entrar - Cantina do Kennedy';
-  const corpo = `Olá, ${nome}!\n\nSeu código para entrar na Cantina do Kennedy é:\n\n${codigo}\n\nDigite este código no site depois da senha.\n`;
-  return 'https://mail.google.com/mail/?view=cm&fs=1'
-    + `&to=${encodeURIComponent(email)}`
-    + `&su=${encodeURIComponent(assunto)}`
-    + `&body=${encodeURIComponent(corpo)}`;
-}
-
 let timerToast;
 function mostrarMensagem(texto) {
   el.toast.textContent = texto;
@@ -309,9 +283,6 @@ function alternarModo(modo) {
   el.abaCriar.classList.toggle('ativa', modo === 'criar');
   el.abaLogin.setAttribute('aria-selected', String(modo === 'login'));
   el.abaCriar.setAttribute('aria-selected', String(modo === 'criar'));
-  el.codigoLogin.hidden = true;
-  el.loginCodigo.value = '';
-  codigoPendente = null;
 }
 
 function renderizarAdmin() {
@@ -335,7 +306,7 @@ function renderizarAdmin() {
   }
 }
 
-// Guarda no dispositivo os logins feitos com sucesso (nunca senha ou código).
+// Guarda no dispositivo os logins feitos com sucesso (nunca senha).
 function registrarLogin(conta) {
   const entrada = {
     nome: conta.nome,
@@ -421,15 +392,19 @@ function entrar(evento) {
     return;
   }
 
-  // Senha correta: agora vem a etapa extra com o código enviado pelo Gmail.
-  const codigo = gerarSenha();
-  codigoPendente = { conta, codigo };
-  el.formLogin.hidden = true;
-  el.codigoLogin.hidden = false;
-  el.loginCodigo.value = '';
-  window.open(linkGmailCodigo(conta.email, conta.nome, codigo), '_blank', 'noopener');
-  mostrarMensagem('Código gerado! Envie o e-mail no Gmail, copie o código e confirme aqui.');
-  el.loginCodigo.focus();
+  // Senha correta: entra direto na conta de cliente, sem código extra.
+  sessao = { tipo: conta.tipo, nome: conta.nome, email: conta.email };
+  salvar(CHAVES.sessao, sessao);
+  registrarLogin(conta);
+
+  cliente = { nome: conta.nome, turma: conta.turma || '' };
+  salvar(CHAVES.cliente, cliente);
+  el.nome.value = cliente.nome;
+  el.turma.value = cliente.turma;
+
+  el.formLogin.reset();
+  renderizarTudo();
+  mostrarMensagem(`Bem-vindo(a), ${conta.nome}!`);
 }
 
 function entrarAdmin(evento) {
@@ -438,7 +413,7 @@ function entrarAdmin(evento) {
   const senhaDeHoje = senhaAdminDoDia();
 
   if (!senhaAdminValida(senhaDeHoje)) {
-    mostrarMensagem('A senha do dia precisa ter no mínimo 12 caracteres, 2 números, maiúscula, minúscula e símbolo. Ajuste o prefixo/sufixo no app.js.');
+    mostrarMensagem('A senha do dia precisa ter no mínimo 8 caracteres, 2 números, maiúscula, minúscula e símbolo. Ajuste o prefixo/sufixo no app.js.');
     return;
   }
 
@@ -457,54 +432,13 @@ function entrarAdmin(evento) {
   mostrarMensagem('Você entrou como administrador.');
 }
 
-function confirmarCodigo() {
-  if (!codigoPendente) {
-    mostrarMensagem('Digite e-mail e senha para receber um código.');
-    return;
-  }
-  if (el.loginCodigo.value.trim() !== codigoPendente.codigo) {
-    mostrarMensagem('Código incorreto. Confira o e-mail no Gmail e tente de novo.');
-    return;
-  }
-
-  const conta = codigoPendente.conta;
-  sessao = { tipo: conta.tipo, nome: conta.nome, email: conta.email };
-  salvar(CHAVES.sessao, sessao);
-  registrarLogin(conta);
-
-  if (conta.tipo === 'cliente') {
-    cliente = { nome: conta.nome, turma: conta.turma || '' };
-    salvar(CHAVES.cliente, cliente);
-    el.nome.value = cliente.nome;
-    el.turma.value = cliente.turma;
-  }
-
-  el.loginSenha.value = '';
-  el.loginCodigo.value = '';
-  el.codigoLogin.hidden = true;
-  codigoPendente = null;
-  renderizarTudo();
-  mostrarMensagem(`Bem-vindo(a), ${conta.nome}!`);
-}
-
-function cancelarCodigo() {
-  codigoPendente = null;
-  el.loginCodigo.value = '';
-  el.codigoLogin.hidden = true;
-  el.formLogin.hidden = false;
-  mostrarMensagem('Login cancelado. Digite e-mail e senha para receber um novo código.');
-}
-
 function sair() {
   sessao = null;
   salvar(CHAVES.sessao, sessao);
   alternarModo('login');
   el.loginEmail.value = '';
   el.loginSenha.value = '';
-  el.loginCodigo.value = '';
   el.adminSenha.value = '';
-  el.codigoLogin.hidden = true;
-  codigoPendente = null;
   renderizarTudo();
   mostrarMensagem('Você saiu da conta.');
 }
@@ -525,7 +459,6 @@ let cardapioExcluidos = ler(CHAVES.cardapioExcluidos, []);
 let cardapioEstoque = ler(CHAVES.cardapioEstoque, {});
 let contas = ler(CHAVES.contas, []);
 let historicoLogin = ler(CHAVES.historicoLogin, []);
-let codigoPendente = null; // código do login só na memória, nunca aparece no site
 let modoAuth = 'login';
 // Só aceita sessões no formato novo (cliente ou administrador).
 let sessao = ler(CHAVES.sessao, null);
@@ -1028,21 +961,6 @@ el.btnLimparHistorico.addEventListener('click', () => {
   mostrarMensagem('Histórico de login apagado.');
 });
 el.btnCancelarEdicao.addEventListener('click', resetarFormItem);
-el.btnConfirmarCodigo.addEventListener('click', confirmarCodigo);
-el.btnCancelarCodigo.addEventListener('click', cancelarCodigo);
-
-el.linkCodigoGmail.addEventListener('click', (evento) => {
-  evento.preventDefault();
-  if (!codigoPendente) {
-    mostrarMensagem('Digite e-mail e senha para receber um código.');
-    return;
-  }
-  window.open(
-    linkGmailCodigo(codigoPendente.conta.email, codigoPendente.conta.nome, codigoPendente.codigo),
-    '_blank',
-    'noopener'
-  );
-});
 
 // Lembra nome e turma enquanto a pessoa digita.
 [el.nome, el.turma].forEach((campo) => campo.addEventListener('input', () => {
@@ -1061,7 +979,6 @@ el.btnLimpar.addEventListener('click', () => {
   contas = [];
   historicoLogin = [];
   sessao = null;
-  codigoPendente = null;
   carrinho = {};
   pedidos = [];
   cliente = { nome: '', turma: '' };
@@ -1071,8 +988,6 @@ el.btnLimpar.addEventListener('click', () => {
   el.formLogin.reset();
   el.formCriar.reset();
   el.formAdmin.reset();
-  el.loginCodigo.value = '';
-  el.codigoLogin.hidden = true;
   alternarModo('login');
   resetarFormItem();
   recarregarCardapio();

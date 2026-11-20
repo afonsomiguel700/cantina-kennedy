@@ -55,13 +55,8 @@ flowchart TD
     LOGIN --> LOGINOK{"Dados corretos?"}
     LOGINOK -->|"Não"| ERROLOGIN["⚠️ Aviso:<br/>e-mail ou senha incorretos"]
     ERROLOGIN --> ENTRADA
-    LOGINOK -->|"Sim"| GERACODIGO["Gera código de 6 dígitos,<br/>abre o Gmail e não mostra<br/>o código no site"]
-    GERACODIGO --> CODIGO["Digita o código do e-mail<br/>e clica em Confirmar"]
-    CODIGO --> CODIGOOK{"Código correto?"}
-    CODIGOOK -->|"Não"| ERROCODIGO["⚠️ Aviso:<br/>código incorreto"]
-    ERROCODIGO --> CODIGO
-    CODIGOOK -->|"Sim"| SESSAO["Salva a sessão<br/>no navegador"]
-    SESSAO --> HISTORICO["Registra no histórico<br/>do dispositivo, sem senha nem código"]
+    LOGINOK -->|"Sim"| SESSAO["Salva a sessão no navegador<br/>e entra direto na conta de cliente"]
+    SESSAO --> HISTORICO["Registra no histórico<br/>do dispositivo, sem senha"]
 
     ENTRADA -->|"Criar conta"| CRIARCLI["Nome, turma da lista,<br/>e-mail e senha numérica<br/>conta criada e já logada"]
     CRIARCLI --> SESSAO
