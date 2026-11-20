@@ -2,8 +2,6 @@
 
 Versão resumida: o caminho principal do site em 7 passos, incluindo conta de cliente, acesso reservado do administrador, estoque e gerenciamento de produtos.
 
-![Fluxograma simples](fluxograma-simples.png)
-
 - [Abrir versão interativa](https://afonsomiguel700.github.io/cantina-kennedy/fluxograma-simples.html)
 - [Ver fluxograma completo](fluxograma.md)
 

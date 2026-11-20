@@ -71,8 +71,6 @@ Se nenhuma estiver marcada, o site avisa e o pedido não é criado. A escolha fi
 
 ## Fluxograma simples (versão fácil)
 
-![Fluxograma simples da Cantina do Kennedy](fluxograma-simples.png)
-
 - [ Abrir fluxograma simples interativo](https://afonsomiguel700.github.io/cantina-kennedy/fluxograma-simples.html)
 
 ## Fluxograma completo
@@ -89,7 +87,6 @@ Se nenhuma estiver marcada, o site avisa e o pedido não é criado. A escolha fi
 | `index.html` | Estrutura das telas do site |
 | `style.css` | Cores, layout e tema claro/escuro |
 | `app.js` | Regras: contas, produtos, estoque, carrinho, pedidos e pessoas |
-| `fluxograma-simples.png` | Versão resumida do fluxo (7 passos) |
 | `fluxograma.png` | Desenho do fluxo completo do site |
 | `fluxograma-simples.html` | Versão interativa do fluxograma simples |
 | `fluxograma.html` | Versão interativa do fluxograma completo |
