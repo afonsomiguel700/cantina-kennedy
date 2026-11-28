@@ -4,7 +4,7 @@ Site para fazer pedidos de lanches da cantina.
 
 🌐 **Site no ar:** https://afonsomiguel700.github.io/cantina-kennedy/
 
-🔑 **Senha do administrador de hoje (27/11/2026):** `Cantina@27112026Kennedy!`
+🔑 **Senha do administrador de hoje (28/11/2026):** `Cantina@28112026Kennedy!`
 
 > Essa linha é atualizada automaticamente todo dia pelo GitHub Actions.
 
